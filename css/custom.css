@@ -20,6 +20,10 @@
     margin-bottom: 0;
 }
 
+.project-header {
+    font-weight: bold;
+}
+
 @media (min-width: 550px) {
     .header {
         margin-top: 18rem;
