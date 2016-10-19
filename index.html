@@ -11,7 +11,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Font -->
-    <link href='//fonts.googleapis.com/css?family=Raleway:400,300,600' rel='stylesheet' type='text/css'>
+    <!--<link href='//fonts.googleapis.com/css?family=Raleway:400,300,600' rel='stylesheet' type='text/css'>-->
+    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
 
     <!-- CSS -->
     <link rel="stylesheet" href="css/normalize.css">
@@ -59,17 +60,44 @@
         <div class="docs-section" id="Portfolio">
             <h6 class="docs-header">Portfolio</h6>
             <ul>
-                <li>
+                <li style="margin-bottom: 4em;">
                     <p class="project-header">Voxel Editor</p>
+                    <p>The goal of Voxel Editor was to create an environment comfortable for an average gamer to design voxel models in.  Voxel Editor features a first person camera and intuitive controls.  The editor exports models in the <a href="https://ephtracy.github.io/index.html?page=mv_vox_format">.vox format</a> making it compatible with other popular voxel editors.  Additionally the editor can procedurally generate terrain using simplex noise.</p>
+                    <img width="100%" src="images/voxel1.png">
+                    <table width="100%">
+                        <tr>
+                            <td style="width: 33%"><img width="100%" src="images/voxel2.png"></td>
+                            <td style="width: 34%"><img width="100%" src="images/voxel3.png"></td>
+                            <td style="width: 33%"><img width="100%" src="images/voxel4.png"></td>
+                        </tr>
+                    </table>
                 </li>
-                <li>
+                <li style="margin-bottom: 4em;">
                     <p class="project-header">Stardew Patcher</p>
+                    <p>Stardew Patcher is a C# application that modifies the MSIL bytecode of <A href="http://stardewvalley.net/">Stardew Valley</a> to fix several bugs with the 1.03 release.</p>
+                    <ul>
+                        <li>The public release accumulated over 10,000 downloads.</li>
+                        <li>The modified executable is created in memory without needing to overwrite any game files.</li>
+                        <li>The patch was released only two days after the game launched and several days before an official patch was available.</li>
+                    </ul>
+                    <a href="https://bitbucket.org/ghillielead/stardew-valley-patcher/downloads">Downloads Page</a>
+                    <br/>
+                    <a href="https://bitbucket.org/ghillielead/stardew-valley-patcher/">BitBucket Repository</a>
                 </li>
-                <li>
-                    <p class="project-header">DCPU-16 Tool Kit</p>
-                </li>
-                <li>
-                    <p class="project-header">Web Server</p>
+                <li style="margin-bottom: 4em;">
+                    <p class="project-header">LibDCPU16</p>
+                    <p>LibDCPU16 is a C library for emulating the DCPU-16 processor.  The emulator is cycle accurate and compatible with the <a href="https://raw.githubusercontent.com/gatesphere/demi-16/master/docs/dcpu-specs/dcpu-1-7.txt">DCPU 1.7 Specification</a> instruction set.  The images below are simple sample programs that write to RAM that is mapped to the LEM1802 monitor.</p>
+                    <center>
+                        <table width="60%">
+                            <tr>
+                                <td style="text-align: center;"><img src="images/emu1.png"></td>
+                                <td style="text-align: center;"><img src="images/emu2.png"></td>
+                                <td style="text-align: center;"><img src="images/emu3.png"></td>
+                            </tr>
+                        </table>
+                    </center>
+                    <p>The snippet below shows the assembly for the "Hello, World!" sample above.</p>
+                    <script src="https://gist.github.com/andrewkersten/2fb416e498f5df93de877869106e2f4c.js"></script>
                 </li>
             </ul>
         </div>
@@ -79,8 +107,11 @@
             <p>Source code for all portfolio projects is available at <a href="https://github.com/andrewkersten">https://github.com/andrewkersten</a>.</p>
         </div>
 
-        <div class="docs-section" id="Resume" style="text-align: center;">
-            <a class="button button-primary" href="#">Download Resume</a>
+        <div class="docs-section" id="Resume">
+            <h6 class="docs-header">Resume</h6>
+            <center>
+                <a class="button button-primary" href="https://drive.google.com/file/d/0B2IH5B0ASCsgNm52OUhXRjZGRnc/view?usp=sharing">Download Resume as PDF</a>
+            </center>
         </div>
     </div>
 </body>
