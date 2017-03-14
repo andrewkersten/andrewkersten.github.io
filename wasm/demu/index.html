@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Basic page needs. -->
+    <meta charset="UTF-8">
+    <meta name="description" content="A simple WebAssembly experiment">
+    <meta name="author" content="Andrew Kersten">
+    <title>WebAssembly Experiment</title>
+    <script id="shader_fullquad_v" type="x-shader/x-vertex">
+    	attribute vec4 vertex;
+    	varying highp vec2 texcoord;
+    	void main() {
+    		texcoord = vertex.zw;
+    		gl_Position = vec4(vertex.xy, 0.0, 1.0);
+    	}
+    </script>
+    <script id="shader_fullquad_f" type="x-shader/x-fragment">
+    	uniform sampler2D texture0;
+    	varying highp vec2 texcoord;
+    	void main() {
+    		//gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+    		gl_FragColor = texture2D(texture0, texcoord);
+    	}
+    </script>
+    <style type="text/css">
+    	table {
+    		border-collapse: collapse;
+    	}
+    	table, tr, td {
+    		border: 1px solid black;
+    	}
+    	canvas {
+    		border: 1px solid black;
+    		background-color: yellow;
+    	}
+    </style>
+</head>
+<body>
+	<h3>WebAssembly Experiment</h3>
+	<canvas id="canvas" width="384" height="288">A WebGL capable browser is required to view the display.</canvas>
+	<table>
+		<tr>
+			<td>A</td>
+			<td id="RA">0x0000</td>
+		</tr>
+		<tr>
+			<td>B</td>
+			<td id="RB">0x0000</td>
+		</tr>
+		<tr>
+			<td>C</td>
+			<td id="RC">0x0000</td>
+		</tr>
+		<tr>
+			<td>X</td>
+			<td id="RX">0x0000</td>
+		</tr>
+		<tr>
+			<td>Y</td>
+			<td id="RY">0x0000</td>
+		</tr>
+		<tr>
+			<td>Z</td>
+			<td id="RZ">0x0000</td>
+		</tr>
+		<tr>
+			<td>I</td>
+			<td id="RI">0x0000</td>
+		</tr>
+		<tr>
+			<td>J</td>
+			<td id="RJ">0x0000</td>
+		</tr>
+		<tr>
+			<td>PC</td>
+			<td id="RPC">0x0000</td>
+		</tr>
+		<tr>
+			<td>SP</td>
+			<td id="RSP">0xFFFF</td>
+		</tr>
+		<tr>
+			<td>IA</td>
+			<td id="REX">0x0000</td>
+		</tr>
+		<tr>
+			<td>EX</td>
+			<td id="RIA">0x0000</td>
+		</tr>
+	</table>
+	<script type="text/javascript">
+		var libc = (function() {
+			var modules = {};
+
+			modules.stdlib = (function() {
+				var stdlib = {};
+
+				var PAGE_SIZE = 1024 * 64;
+				var NUM_PAGES = 256;
+				var HEAP_PTR = 0;
+
+				var HEAP;
+				var HEAP8;
+				var HEAP16;
+				var HEAP32;
+
+				var alignHeapPtr = function() {
+					HEAP_PTR = (HEAP_PTR % 4) == 0 ? HEAP_PTR : HEAP_PTR + (4 - (HEAP_PTR % 4));
+				};
+
+				stdlib.prepareHeap = function(memory, offset) {
+					HEAP_PTR = offset;
+					alignHeapPtr();
+					HEAP = memory;
+					HEAP8 = new Uint8Array(memory);
+					HEAP16 = new Uint16Array(memory);
+					HEAP32 = new Uint32Array(memory);
+				};
+
+				stdlib.getHeapPtr = function() {
+					return HEAP_PTR;
+				};
+
+				stdlib.getIntFromHeap = function(address) {
+					return new Uint32Array(HEAP, address, 1)[0];
+				};
+
+				stdlib.heap8 = function() {
+					return HEAP8;
+				};
+
+				stdlib.assert = function(expression) {
+				};
+
+				stdlib.malloc = function(bytes) {
+					if (bytes > PAGE_SIZE * NUM_PAGES - HEAP_PTR) {
+						return null;
+					}
+					var ptr = HEAP_PTR;
+					HEAP_PTR += bytes;
+					alignHeapPtr();
+					return ptr;
+				};
+
+				stdlib.calloc = function(numItems, size) {
+					var bytes = numItems * size;
+					var ptr = stdlib.malloc(bytes);
+					HEAP8.fill(0, ptr, ptr + bytes);
+					return ptr;
+				};
+
+				stdlib.free = function(ptr) {
+				};
+
+				return stdlib;
+			})();
+
+			modules.string = (function() {
+				var string = {};
+
+				string.memcpy = function(dst, src, size) {
+					modules.stdlib.heap8().copyWithin(dst, src, src + size);
+				};
+
+				return string;
+			})();
+
+			return modules;
+		})();
+
+		var wasm = (function() {
+			var binaryArrayBuffer;
+			var module;
+			var memory;
+			var instance;
+
+			function isValidbinary(array) {
+				var headerValues = [0, 97, 115, 109, 1, 0, 0, 0, 0, 0, 6, 100, 121, 108, 105, 110, 107];
+				var headerIgnore = [false, false, false, false, true, true, true, true, false, true, false, false, false, false, false, false, false];
+
+				for (var i = 0; i < headerValues.length; i++) {
+					if (headerIgnore[i]) {
+						continue;
+					}
+					if (array[i] != headerValues[i]) {
+						return false;
+					}
+				}
+
+				return true;
+			}
+
+			function readVarint32(array, offset) {
+				var value = 0;
+				for (var i = 0; i < 5; i++) {
+					var bits = array[offset + i] & 127;
+					bits = bits << (i * 7);
+					value = value | bits;
+					if (array[offset + i] >> 7 == 0) {
+						break;
+					}
+				}
+				return value;
+			}
+
+			return {
+				loadModule: function(url) {
+					fetch(url).then(function(response) {
+						response.arrayBuffer().then(function(buffer) {
+							binaryArrayBuffer = buffer;
+
+							var binaryByteBuffer = new Uint8Array(binaryArrayBuffer);
+							if (isValidbinary(binaryByteBuffer) == false) {
+								return;
+							}
+
+							wasm.memory = new WebAssembly.Memory({ initial: 256 });
+
+							libc.stdlib.prepareHeap(wasm.memory.buffer, readVarint32(binaryByteBuffer, 16));
+
+							WebAssembly.compile(binaryArrayBuffer).then(function(module) {
+								wasm.module = module;
+								
+								imports = {};
+								imports.env = {};
+								imports.env.memoryBase = 0;
+								imports.env.memory = wasm.memory;
+								imports.env.tableBase = 0;
+								imports.env.table = new WebAssembly.Table({ initial: 0, element: 'anyfunc' });
+								imports.env._assert = libc.stdlib.assert;
+								imports.env._calloc = libc.stdlib.calloc;
+								imports.env._free = libc.stdlib.free;
+								imports.env._malloc = libc.stdlib.malloc;
+								imports.env._memcpy = libc.string.memcpy;
+
+								WebAssembly.instantiate(module, imports).then(function(instance) {
+									wasm.instance = instance;
+								});
+							});
+						});
+					});
+				},
+				module: module,
+				memory: memory,
+				instance: instance,
+			};
+		})();
+
+		var demu = (function() {
+			var exports = {};
+
+			var canvas = document.getElementById('canvas');
+			var gl = canvas.getContext('webgl');
+			var shader = {};
+			var geom;
+			var texture;
+			//var image;
+
+			var initializeWebGL = function() {
+				createShader();
+				createGeom();
+				createTexture();
+				gl.clearColor(0.0, 0.0, 0.0, 1.0);
+			};
+
+			var createShader = function() {
+				var shaderScriptElemV = document.getElementById('shader_fullquad_v');
+				var shaderScriptElemF = document.getElementById('shader_fullquad_f');
+
+				var shaderV = gl.createShader(gl.VERTEX_SHADER);
+				var shaderF = gl.createShader(gl.FRAGMENT_SHADER);
+
+				gl.shaderSource(shaderV, shaderScriptElemV.text);
+				gl.shaderSource(shaderF, shaderScriptElemF.text);
+
+				gl.compileShader(shaderV);
+				gl.compileShader(shaderF);
+
+				shader.handle = gl.createProgram();
+				gl.attachShader(shader.handle, shaderV);
+				gl.attachShader(shader.handle, shaderF);
+				gl.linkProgram(shader.handle);
+
+				shader.attr = {};
+				shader.attr.vertex = gl.getAttribLocation(shader.handle, 'vertex');
+				gl.enableVertexAttribArray(shader.attr.vertex);
+			};
+
+			var createGeom = function() {
+				var verts = [
+					-1.0, 1.0, 0.0, 1.0,
+					1.0, -1.0, 1.0, 0.0,
+					-1.0, -1.0, 0.0, 0.0,
+
+					-1.0, 1.0, 0.0, 1.0,
+					1.0, 1.0, 1.0, 1.0,
+					1.0, -1.0, 1.0, 0.0,
+				];
+
+				geom = gl.createBuffer();
+				gl.bindBuffer(gl.ARRAY_BUFFER, geom);
+				gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts), gl.STATIC_DRAW);
+			};
+
+			var createTexture = function() {
+				var data = new Uint8Array(384 * 288 * 4);
+				//data.fill(255);
+				for (var i = 0; i < 384 * 288 * 4; i++) {
+					if (i % 2 == 0) {
+						data[i] = 255;
+					} else {
+						data[i] = 0;
+					}
+				}
+
+				texture = gl.createTexture();
+				gl.bindTexture(gl.TEXTURE_2D, texture);
+				//gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+				gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 384, 288, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
+				//gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, data);
+				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+				gl.bindTexture(gl.TEXTURE_2D, null);
+				//gl.generateMipmap(gl.TEXTURE_2D);
+			};
+
+			var loop = function() {
+				gl.clear(gl.COLOR_BUFFER_BIT);
+
+				gl.useProgram(shader.handle);
+				gl.activeTexture(gl.TEXTURE0);
+				gl.bindTexture(gl.TEXTURE_2D, texture);
+				gl.uniform1i(gl.getUniformLocation(shader.handle, 'texture0'), 0);
+				gl.bindBuffer(gl.ARRAY_BUFFER, geom);
+				gl.vertexAttribPointer(shader.attr.vertex, 4, gl.FLOAT, false, 0, 0);
+				gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+				window.requestAnimationFrame(loop);
+			};
+
+			exports.start = function() {
+				initializeWebGL();
+				loop();
+			};
+
+			return exports;
+		})();
+
+		wasm.loadModule('demu.wasm');
+
+		var demuBinary = null;
+
+		fetch('test.bin').then(function(response) {
+			response.arrayBuffer().then(function(buffer) {
+				demuBinary = new Uint8Array(buffer);
+			});
+		});
+
+		var dcpu = null;
+		var registers = [ document.getElementById('RA'), document.getElementById('RB'), document.getElementById('RC'), document.getElementById('RX'), document.getElementById('RY'), document.getElementById('RZ'), document.getElementById('RI'), document.getElementById('RJ'), document.getElementById('RPC'), document.getElementById('RSP'), document.getElementById('REX'), document.getElementById('RIA') ];	
+
+		function createDCPU() {
+			dcpu = wasm.instance.exports._dcpu_create();
+		}
+
+		function uploadBinary() {
+			var ptr = libc.stdlib.malloc(demuBinary.byteLength);
+			libc.stdlib.heap8().set(demuBinary, ptr);
+			wasm.instance.exports._dcpu_flash(dcpu, ptr, demuBinary.byteLength);
+		}
+
+		function cycle() {
+			setTimeout(function() {
+				wasm.instance.exports._dcpu_cycle(dcpu);
+
+				for (var i = 0; i < 12; i++) {
+					registers[i].textContent = wasm.instance.exports._dcpu_get_register(dcpu, i);
+				}
+				
+				cycle();
+			}, 1000);
+		}
+
+		function start() {
+			createDCPU();
+			uploadBinary();
+			wasm.instance.exports._dcpu_power_on(dcpu);
+			cycle();
+		}
+	</script>
+</body>
+</html>
