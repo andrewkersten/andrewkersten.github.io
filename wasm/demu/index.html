@@ -19,7 +19,9 @@
     	varying highp vec2 texcoord;
     	void main() {
     		//gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
-    		gl_FragColor = texture2D(texture0, texcoord);
+    		//gl_FragColor = vec4(texcoord.x, 0.0, texcoord.y, 1.0);
+    		gl_FragColor = texture2D(texture0, vec2(texcoord.x, texcoord.y));
+    		//gl_FragColor.a = 1.0;
     	}
     </script>
     <style type="text/css">
@@ -115,6 +117,7 @@
 					HEAP8 = new Uint8Array(memory);
 					HEAP16 = new Uint16Array(memory);
 					HEAP32 = new Uint32Array(memory);
+					stdlib.heap = HEAP;
 				};
 
 				stdlib.getHeapPtr = function() {
@@ -216,7 +219,9 @@
 
 							wasm.memory = new WebAssembly.Memory({ initial: 256 });
 
-							libc.stdlib.prepareHeap(wasm.memory.buffer, readVarint32(binaryByteBuffer, 16));
+							//libc.stdlib.prepareHeap(wasm.memory.buffer, readVarint32(binaryByteBuffer, 16));
+							// TODO!! this is not leaving enough space, c static data was being overwritten!!
+							libc.stdlib.prepareHeap(wasm.memory.buffer, 1024 * 16);
 
 							WebAssembly.compile(binaryArrayBuffer).then(function(module) {
 								wasm.module = module;
@@ -254,6 +259,8 @@
 			var shader = {};
 			var geom;
 			var texture;
+			var texture_data_ptr;
+			var texture_data;
 			//var image;
 
 			var initializeWebGL = function() {
@@ -276,10 +283,15 @@
 				gl.compileShader(shaderV);
 				gl.compileShader(shaderF);
 
+				console.log("vert: " + gl.getShaderParameter(shaderV, gl.COMPILE_STATUS));
+				console.log("frag: " + gl.getShaderParameter(shaderF, gl.COMPILE_STATUS));
+
 				shader.handle = gl.createProgram();
 				gl.attachShader(shader.handle, shaderV);
 				gl.attachShader(shader.handle, shaderF);
 				gl.linkProgram(shader.handle);
+
+				console.log("shader: " + gl.getProgramParameter(shader.handle, gl.LINK_STATUS));
 
 				shader.attr = {};
 				shader.attr.vertex = gl.getAttribLocation(shader.handle, 'vertex');
@@ -303,31 +315,38 @@
 			};
 
 			var createTexture = function() {
-				var data = new Uint8Array(384 * 288 * 4);
-				//data.fill(255);
-				for (var i = 0; i < 384 * 288 * 4; i++) {
-					if (i % 2 == 0) {
-						data[i] = 255;
-					} else {
-						data[i] = 0;
-					}
+				var data = new Uint8Array(128 * 96 * 4);
+				for (var i = 0; i < 128 * 96; i++) {
+					data[i * 4 + 0] = 0;
+					data[i * 4 + 1] = 255;
+					data[i * 4 + 2] = 0;
+					data[i * 4 + 3] = 255;
 				}
+
+				//libc.stdlib.malloc(1024 * 16);
+				texture_data_ptr = libc.stdlib.malloc(128 * 96 * 4);
+				texture_data = new Uint8Array(libc.stdlib.heap, texture_data_ptr);
 
 				texture = gl.createTexture();
 				gl.bindTexture(gl.TEXTURE_2D, texture);
 				//gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-				gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 384, 288, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
-				//gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, data);
+				gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 128, 96, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
 				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
 				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
 				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 				gl.bindTexture(gl.TEXTURE_2D, null);
-				//gl.generateMipmap(gl.TEXTURE_2D);
+			};
+
+			exports.updateTexture = function() {
+				wasm.instance.exports._dcpu_write_texture(dcpu, texture_data_ptr);
+				gl.bindTexture(gl.TEXTURE_2D, texture);
+				gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+				gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 128, 96, 0, gl.RGBA, gl.UNSIGNED_BYTE, texture_data);
 			};
 
 			var loop = function() {
-				gl.clear(gl.COLOR_BUFFER_BIT);
+				gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
 				gl.useProgram(shader.handle);
 				gl.activeTexture(gl.TEXTURE0);
@@ -352,7 +371,7 @@
 
 		var demuBinary = null;
 
-		fetch('test.bin').then(function(response) {
+		fetch('bars.bin').then(function(response) {
 			response.arrayBuffer().then(function(buffer) {
 				demuBinary = new Uint8Array(buffer);
 			});
@@ -376,19 +395,24 @@
 				wasm.instance.exports._dcpu_cycle(dcpu);
 
 				for (var i = 0; i < 12; i++) {
-					registers[i].textContent = wasm.instance.exports._dcpu_get_register(dcpu, i);
+					registers[i].textContent = "0x" + (0x10000 + wasm.instance.exports._dcpu_get_register(dcpu, i)).toString(16).substr(-4).toUpperCase();
 				}
+
+				demu.updateTexture();
 				
 				cycle();
-			}, 1000);
+			}, 10);
 		}
 
 		function start() {
 			createDCPU();
 			uploadBinary();
 			wasm.instance.exports._dcpu_power_on(dcpu);
+			demu.start();
 			cycle();
 		}
+
+		setTimeout(start, 3000);
 	</script>
 </body>
 </html>

@@ -119,3 +119,5 @@ DLLEXPORT void dcpu_set_register(DCPU dcpu, enum Register r, uint16_t value);
 * @return The value of the register.
 */
 DLLEXPORT uint16_t dcpu_get_register(DCPU dcpu, enum Register r);
+
+DLLEXPORT void dcpu_write_texture(DCPU dcpu, char* texture_data);
