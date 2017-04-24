@@ -759,7 +759,7 @@ void dcpu_cycle(DCPU dcpu)
 						}
 						case 0x14: // IFG
 						{
-							if ((*dcpu->operand_a) <= (*dcpu->operand_b))
+							if ((*dcpu->operand_a) >= (*dcpu->operand_b))
 							{
 								dcpu->state = DCPU_INSTRUCTION_SKIP;
 							}
@@ -774,7 +774,7 @@ void dcpu_cycle(DCPU dcpu)
 						*/
 						case 0x16: // IFL
 						{
-							if ((*dcpu->operand_a) >= (*dcpu->operand_b))
+							if ((*dcpu->operand_a) <= (*dcpu->operand_b))
 							{
 								dcpu->state = DCPU_INSTRUCTION_SKIP;
 							}

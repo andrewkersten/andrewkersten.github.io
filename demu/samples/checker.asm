@@ -1,0 +1,28 @@
+; NAME: checker
+; DESCRIPTION: Displays a checkerboard pattern
+; VERSION: 1.0
+; AUTHOR: Andrew Kersten
+; DCPU-16 VERSION: 1.7
+
+SET X, 0x031F
+SET I, 0x0000
+
+EVEN:
+	SET [0x8000 + I], X
+	ADD I, 0x0002
+
+	IFL I, 0x017F
+		SET PC, EVEN
+
+SET X, 0x031C
+SET I, 0x0001
+
+ODD:
+	SET [0x8000 + I], X
+	ADD I, 0x0002
+
+	IFL I, 0x0180
+		SET PC, ODD
+	
+HANG:
+	SET PC, HANG
