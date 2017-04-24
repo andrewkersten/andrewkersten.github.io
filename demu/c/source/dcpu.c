@@ -230,6 +230,11 @@ void dcpu_destroy(DCPU dcpu)
 
 void dcpu_reset(DCPU dcpu)
 {
+	if (dcpu == NULL)
+	{
+		return;
+	}
+
 	dcpu->fire = FALSE;
 	dcpu->skip = FALSE;
 	dcpu->queue_interrupts = FALSE;
@@ -250,21 +255,38 @@ void dcpu_reset(DCPU dcpu)
 	dcpu->registers[REGISTER_SP] = 0xFFFF;
 	dcpu->registers[REGISTER_EX] = 0x0000;
 	dcpu->registers[REGISTER_IA] = 0x0000;
+
+	memset(dcpu->memory, 0, DCPU_MEMORY_SIZE);
 }
 
 void dcpu_power_on(DCPU dcpu)
 {
-	dcpu_reset(dcpu);
+	if (dcpu == NULL)
+	{
+		return;
+	}
+
+	//dcpu_reset(dcpu);
 	dcpu->running = TRUE;
 }
 
 void dcpu_power_off(DCPU dcpu)
 {
+	if (dcpu == NULL)
+	{
+		return;
+	}
+
 	dcpu->running = FALSE;
 }
 
 void dcpu_flash(DCPU dcpu, char* bytes, size_t length)
 {
+	if (dcpu == NULL)
+	{
+		return;
+	}
+
 	if (dcpu->running == TRUE)
 	{
 		dcpu->fire = TRUE;
@@ -283,6 +305,11 @@ void dcpu_flash(DCPU dcpu, char* bytes, size_t length)
 
 BOOLINT dcpu_attach(DCPU dcpu, struct hardware hardware)
 {
+	if (dcpu == NULL)
+	{
+		return FALSE;
+	}
+
 	if (dcpu->hardware_count >= DCPU_HARDWARE_CAPACITY)
 	{
 		return FALSE;
@@ -406,6 +433,11 @@ static void decode_instruction(DCPU dcpu)
 
 void dcpu_cycle(DCPU dcpu)
 {
+	if (dcpu == NULL)
+	{
+		return;
+	}
+
 	if (dcpu->running == FALSE || dcpu->fire == TRUE)
 	{
 		return;
@@ -858,6 +890,11 @@ void dcpu_cycle(DCPU dcpu)
 
 void dcpu_process(DCPU dcpu, size_t cycles)
 {
+	if (dcpu == NULL)
+	{
+		return;
+	}
+
 	for (size_t i = 0; i < cycles; i++)
 	{
 		dcpu_cycle(dcpu);
@@ -866,6 +903,11 @@ void dcpu_process(DCPU dcpu, size_t cycles)
 
 void dcpu_interrupt(DCPU dcpu, uint16_t message)
 {
+	if (dcpu == NULL)
+	{
+		return;
+	}
+
 	if (interrupt_queue_push(dcpu->interrupt_queue, message) == FALSE)
 	{
 		dcpu->fire = TRUE;
@@ -874,16 +916,31 @@ void dcpu_interrupt(DCPU dcpu, uint16_t message)
 
 void dcpu_set_register(DCPU dcpu, enum Register r, uint16_t value)
 {
+	if (dcpu == NULL)
+	{
+		return;
+	}
+
 	dcpu->registers[r] = value;
 }
 
 uint16_t dcpu_get_register(DCPU dcpu, enum Register r)
 {
+	if (dcpu == NULL)
+	{
+		return 0;
+	}
+
 	return dcpu->registers[r];
 }
 
 void dcpu_write_texture(DCPU dcpu, char* texture_data)
 {
+	if (dcpu == NULL)
+	{
+		return;
+	}
+
 	uint16_t* vram = &dcpu->memory[0x8000];
 	uint16_t* fram = lem1802_font_default;
 	uint16_t* pram = lem1802_palette_default;

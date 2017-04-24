@@ -13,7 +13,7 @@
 #define DCPU_HARDWARE_CAPACITY 16
 
 /** The size of RAM in bytes. */
-#define DCPU_MEMORY_SIZE 65536
+#define DCPU_MEMORY_SIZE 131072 // 65536 words * 2 bytes per word
 
 /** The speed of the DCPU. */
 #define DCPU_CYCLES_PER_SECOND 100000
@@ -112,12 +112,18 @@ DLLEXPORT void dcpu_interrupt(DCPU dcpu, uint16_t message);
 DLLEXPORT void dcpu_set_register(DCPU dcpu, enum Register r, uint16_t value);
 
 /**
-* Read a value from a register.
-* The DCPU must be powered on and not on fire for this to have an effect.
-* @param dcpu The DCPU instance.
-* @param r The register to read from.
-* @return The value of the register.
-*/
+ * Read a value from a register.
+ * The DCPU must be powered on and not on fire for this to have an effect.
+ * @param dcpu The DCPU instance.
+ * @param r The register to read from.
+ * @return The value of the register.
+ */
 DLLEXPORT uint16_t dcpu_get_register(DCPU dcpu, enum Register r);
 
+/**
+ * Temporary solution until a proper implementation of hardware is available.
+ * This generates a 128x96x4 texture LEM1802 monitor texture and writes it to texture_data.
+ * @param dcpu The DCPU instance.
+ * @param texture_data The location to write the texture to.  Must be 128 * 96 * 4 bytes.
+ */
 DLLEXPORT void dcpu_write_texture(DCPU dcpu, char* texture_data);

@@ -1,0 +1,34 @@
+; NAME: bars
+; DESCRIPTION: Displays vertical colored bars
+; VERSION: 1.0
+; AUTHOR: Andrew Kersten
+; DCPU-16 VERSION: 1.7
+
+SET I, 0x0000
+SET J, 0x0000
+
+DISPLAY_BARS:
+	SET A, I
+	MOD A, 0x0010
+	SHL A, 0x000C ; Color bits offset
+	BOR A, 0x001B ; Solid foreground character
+
+	DISPLAY_BARS_INNER:
+	SET B, J
+	MUL B, 0x0020
+	ADD B, I
+	SET [0x8000 + B], A
+	ADD J, 0x0001
+
+	IFN J, 0x000C
+		SET PC, DISPLAY_BARS_INNER
+
+	SET J, 0x0000
+	ADD I, 0x0001
+	IFE I, 0x0020
+		SET PC, HANG
+
+	SET PC, DISPLAY_BARS
+	
+HANG:
+	SET PC, HANG
