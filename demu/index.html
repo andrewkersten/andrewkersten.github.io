@@ -71,6 +71,10 @@
     	.registerUnchanged {
     		color: black;
     	}
+    	.error {
+    		display: none;
+    		color: red;
+    	}
     </style>
 </head>
 <body>
@@ -87,6 +91,7 @@
 			</p>
 		</section>
 		<div class="row emulator">
+			<label id="error" class="error"></label>
 			<canvas id="canvas" width="384" height="288">A WebGL capable browser is required to view the display.</canvas>
 			<p>
 				<input type="button" id="startStopButton" value="Start" onclick="emulator.handleStartStop()">
@@ -140,6 +145,12 @@
 	<!-- Application Logic -->
 	<script type="text/javascript" src="wasm.js"></script>
 	<script type="text/javascript">
+		if (window.WebAssembly == null) {
+			var errorLabel = document.getElementById("error");
+			errorLabel.textContent = "Your browser doesn't support WebAssembly.";
+			errorLabel.style.display = "block";
+		}
+
 		wasm.createInstance("demu.wasm").then(function() {
 			emulator.initialize();
 			sampleSelected("stripes");
