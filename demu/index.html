@@ -133,9 +133,9 @@
 				<button type="button" onclick="sampleSelected('stripes')" style="width: 100%;">Run</button>
 			</div>
 			<div class="four columns sample">
-				<label>Font Dump</label>
-				<p>Displays all available font characters.</p>
-				<button type="button" onclick="sampleSelected('font')" style="width: 100%;">Run</button>
+				<label>Animated Luigi</label>
+				<p>Displays an animated Luigi sprite.  High emulation speed recomended.</p>
+				<button type="button" onclick="sampleSelected('luigi')" style="width: 100%;">Run</button>
 			</div>
 		</div>
 		<h5 class="heading" style="margin-top: 2rem;">Source of selected sample:</h5>
@@ -153,7 +153,7 @@
 
 		wasm.createInstance("demu.wasm").then(function() {
 			emulator.initialize();
-			sampleSelected("stripes");
+			sampleSelected("luigi");
 		});
 
 		function sampleSelected(name) {
