@@ -303,26 +303,24 @@ void dcpu_flash(DCPU dcpu, char* bytes, size_t length)
 	}
 }
 
-BOOLINT dcpu_attach(DCPU dcpu, struct hardware hardware)
+HARDWARE dcpu_attach(DCPU dcpu)
 {
 	if (dcpu == NULL)
 	{
-		return FALSE;
+		return NULL;
 	}
 
 	if (dcpu->hardware_count >= DCPU_HARDWARE_CAPACITY)
 	{
-		return FALSE;
+		return NULL;
 	}
-
-	dcpu->hardware[dcpu->hardware_count++] = hardware;
 
 	if (dcpu->running == TRUE)
 	{
 		dcpu->fire = TRUE;
 	}
 
-	return TRUE;
+	return &dcpu->hardware[dcpu->hardware_count++];
 }
 
 static uint16_t* operand_address(DCPU dcpu, uint16_t operand, BOOLINT is_operand_a)
@@ -565,12 +563,36 @@ void dcpu_cycle(DCPU dcpu)
 								}
 								case 0x11: // HWQ
 								{
-									// TODO: Implement Hardware
+									uint16_t hardware_index = *dcpu->operand_a;
+
+									if (hardware_index >= dcpu->hardware_count)
+									{
+										dcpu->registers[REGISTER_A] = 0x0000;
+										dcpu->registers[REGISTER_B] = 0x0000;
+										dcpu->registers[REGISTER_C] = 0x0000;
+										dcpu->registers[REGISTER_X] = 0x0000;
+										dcpu->registers[REGISTER_Y] = 0x0000;
+									}
+									else
+									{
+										dcpu->hardware[hardware_index].hwq(dcpu, &dcpu->hardware[hardware_index]);
+									}
+
 									break;
 								}
 								case 0x12: // HWI
 								{
-									// TODO: Implement Hardware
+									uint16_t hardware_index = *dcpu->operand_a;
+
+									if (hardware_index >= dcpu->hardware_count)
+									{
+										// BAD HARDWARE_INDEX... FIRE?
+									}
+									else
+									{
+										dcpu->hardware[hardware_index].hwi(dcpu, &dcpu->hardware[hardware_index]);
+									}
+
 									break;
 								}
 								default:
@@ -934,110 +956,12 @@ uint16_t dcpu_get_register(DCPU dcpu, enum Register r)
 	return dcpu->registers[r];
 }
 
-void dcpu_write_texture(DCPU dcpu, char* texture_data)
+uint16_t* dcpu_memory(DCPU dcpu)
 {
 	if (dcpu == NULL)
 	{
-		return;
+		return NULL;
 	}
 
-	uint16_t* vram = &dcpu->memory[0x8000];
-	uint16_t* fram = lem1802_font_default;
-	uint16_t* pram = lem1802_palette_default;
-
-	for (int j = 0; j < 96; j++)
-	{
-		int cell_y = j / 8;
-
-		for (int i = 0; i < 128; i++)
-		{
-			int cell_x = i / 4;
-
-			int cell_i = cell_y * 32 + cell_x;
-
-			uint16_t cell = vram[cell_i];
-
-			// Split the cell data into seperate components.
-			// FFFFBBBBXCCCCCCC : F = foreground, B = background, C = character
-			uint16_t char_f = cell >> 12;
-			uint16_t char_b = (cell >> 8) & 0xF;
-			uint16_t char_c = cell & 0x7F;
-
-			// Look up foreground and background colors from the palette memory.
-			uint16_t pal_f = pram[char_f];
-			uint16_t pal_b = pram[char_b];
-
-			// Split the condensed foreground color into RGBA components.
-			// 0000RRRRGGGGBBBB
-			uint8_t pal_f_r = (pal_f >> 8) * 16;
-			uint8_t pal_f_g = ((pal_f >> 4) & 0xF) * 16;
-			uint8_t pal_f_b = (pal_f & 0xF) * 16;
-			uint8_t pal_f_a = 255;
-
-			// Split the condensed background color into RGBA components.
-			// 0000RRRRGGGGBBBB
-			uint8_t pal_b_r = (pal_b >> 8) * 16;
-			uint8_t pal_b_g = ((pal_b >> 4) & 0xF) * 16;
-			uint8_t pal_b_b = (pal_b & 0xF) * 16;
-			uint8_t pal_b_a = 255;
-
-			// The first two columns of a font character are stored in the first word of font memory.
-			// The last two columns of a font character are stored in the second word of font memory.
-			int font_column = i % 4;
-			int font_row = j % 8;
-
-			if (font_column < 2)
-			{
-				uint16_t font = fram[char_c * 2];
-
-				if (font_column == 0)
-				{
-					font = font >> 8;
-				}
-
-				font = (font >> font_row) & 0x1;
-
-				if (font)
-				{
-					texture_data[(j * 128 + i) * 4 + 0] = pal_f_r;
-					texture_data[(j * 128 + i) * 4 + 1] = pal_f_g;
-					texture_data[(j * 128 + i) * 4 + 2] = pal_f_b;
-					texture_data[(j * 128 + i) * 4 + 3] = pal_f_a;
-				}
-				else
-				{
-					texture_data[(j * 128 + i) * 4 + 0] = pal_b_r;
-					texture_data[(j * 128 + i) * 4 + 1] = pal_b_g;
-					texture_data[(j * 128 + i) * 4 + 2] = pal_b_b;
-					texture_data[(j * 128 + i) * 4 + 3] = pal_b_a;
-				}
-			}
-			else
-			{
-				uint16_t font = fram[char_c * 2 + 1];
-
-				if (font_column == 2)
-				{
-					font = font >> 8;
-				}
-
-				font = (font >> font_row) & 0x1;
-
-				if (font)
-				{
-					texture_data[(j * 128 + i) * 4 + 0] = pal_f_r;
-					texture_data[(j * 128 + i) * 4 + 1] = pal_f_g;
-					texture_data[(j * 128 + i) * 4 + 2] = pal_f_b;
-					texture_data[(j * 128 + i) * 4 + 3] = pal_f_a;
-				}
-				else
-				{
-					texture_data[(j * 128 + i) * 4 + 0] = pal_b_r;
-					texture_data[(j * 128 + i) * 4 + 1] = pal_b_g;
-					texture_data[(j * 128 + i) * 4 + 2] = pal_b_b;
-					texture_data[(j * 128 + i) * 4 + 3] = pal_b_a;
-				}
-			}
-		}
-	}
+	return dcpu->memory;
 }

@@ -66,15 +66,14 @@ DLLEXPORT void dcpu_power_off(DCPU dcpu);
 DLLEXPORT void dcpu_flash(DCPU dcpu, char* bytes, size_t length);
 
 /**
- * Attach a piece of hardware to the DCPU.
+ * Attempts to reserve a hardware slot on the dcpu.
  * A DCPU can have up to DCPU_HARDWARE_CAPACITY pieces of hardware attached to
  * it. The DCPU is not hot swappable. Attaching hardware to the DCPU while it
  * is powered on will cause the DCPU to catch on fire.
  * @param dcpu The DCPU instance.
- * @param hardware The hardware to attach.
- * @return TRUE on success, FALSE otherwise.
+ * @return A hardware handle if available, NULL if all slots are taken.
  */
-DLLEXPORT BOOLINT dcpu_attach(DCPU dcpu, struct hardware hardware);
+DLLEXPORT HARDWARE dcpu_attach(DCPU dcpu);
 
 /**
  * Simulate one clock cycle.
@@ -121,9 +120,8 @@ DLLEXPORT void dcpu_set_register(DCPU dcpu, enum Register r, uint16_t value);
 DLLEXPORT uint16_t dcpu_get_register(DCPU dcpu, enum Register r);
 
 /**
- * Temporary solution until a proper implementation of hardware is available.
- * This generates a 128x96x4 texture LEM1802 monitor texture and writes it to texture_data.
+ * Get a pointer to the DCPU memory.
  * @param dcpu The DCPU instance.
- * @param texture_data The location to write the texture to.  Must be 128 * 96 * 4 bytes.
+ * @return A pointer to the DCPU memory, DCPU_MEMORY_SIZE bytes.
  */
-DLLEXPORT void dcpu_write_texture(DCPU dcpu, char* texture_data);
+DLLEXPORT uint16_t* dcpu_memory(DCPU dcpu);

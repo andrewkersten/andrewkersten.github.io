@@ -34,6 +34,10 @@ var wasm = (function() {
 				BUFFER = buffer;
 			};
 
+			stdlib.abort = function() {
+				console.error("ABORT");
+			};
+
 			stdlib.assert = function(expression) {
 			};
 
@@ -91,9 +95,10 @@ var wasm = (function() {
 						imports.env.memoryBase = 0;
 						imports.env.memory = wasmModule.memory;
 						imports.env.tableBase = 0;
-						imports.env.table = new WebAssembly.Table({ initial: 0, element: 'anyfunc' });
+						imports.env.table = new WebAssembly.Table({ initial: 8, element: 'anyfunc' }); // I'm not sure why this is an 'initial: 8' now.  Pulled '8' from .wast file
 
 						// TODO: Custom imports go here
+						imports.env.abort = wasmModule.libc.stdlib.abort; // I'm not sure why this is a required import now.  And no '_' ...
 						imports.env._assert = wasmModule.libc.stdlib.assert;
 						imports.env._malloc = wasmModule.libc.stdlib.malloc;
 						imports.env._calloc = wasmModule.libc.stdlib.calloc;
@@ -195,7 +200,7 @@ var emulator = (function() {
 		};
 
 		rendererModule.updateTexture = function() {
-			wasm.instance.exports["_dcpu_write_texture"](handle, texture_buffer);
+			wasm.instance.exports["_lem1802_write_texture"](handleLEM1802, handle, texture_buffer);
 			gl.bindTexture(gl.TEXTURE_2D, texture);
 			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 128, 96, 0, gl.RGBA, gl.UNSIGNED_BYTE, texture_dataview);
 			gl.bindTexture(gl.TEXTURE_2D, null);
@@ -270,11 +275,17 @@ var emulator = (function() {
 	var cyclesPerFrame = 10;
 
 	var handle = null;
+	var handleLEM1802;
 
 	var binary = null;
 
 	emulatorModule.initialize = function() {
 		handle = wasm.instance.exports["_dcpu_create"]();
+
+		// Attach a LEM1802 to the DCPU
+		handleLEM1802 = wasm.instance.exports["_dcpu_attach"](handle);
+		wasm.instance.exports["_lem1802_initialize"](handleLEM1802);
+
 		renderer.initialize();
 		
 		// The speed slider likes to "stick" to its previous value, force it to the default
