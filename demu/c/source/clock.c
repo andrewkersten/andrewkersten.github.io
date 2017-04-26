@@ -99,6 +99,26 @@ static void tick_handler(void* void_dcpu, HARDWARE hardware)
 	}
 }
 
+static void reset_handler(HARDWARE hardware)
+{
+	if (hardware == NULL)
+	{
+		return;
+	}
+
+	CLOCK clock = (CLOCK)hardware->state;
+
+	if (clock == NULL)
+	{
+		return;
+	}
+
+	clock->rate = 0x0000;
+	clock->clockTicks = 0x0000;
+	clock->message = 0x0000;
+	clock->gameTicks = 0x0000;
+}
+
 static void destroy_handler(HARDWARE hardware)
 {
 	if (hardware == NULL)
@@ -119,14 +139,10 @@ void clock_initialize(HARDWARE hardware)
 	hardware->hwq = hwq_handler;
 	hardware->hwi = hwi_handler;
 	hardware->tick = tick_handler;
+	hardware->reset = reset_handler;
 	hardware->destroy = destroy_handler;
 
-	CLOCK clock = malloc(sizeof(struct clock));
+	hardware->state = malloc(sizeof(struct clock));
 
-	clock->rate = 0x0000;
-	clock->clockTicks = 0x0000;
-	clock->message = 0x0000;
-	clock->gameTicks = 0x0000;
-
-	hardware->state = clock;
+	reset_handler(hardware);
 }

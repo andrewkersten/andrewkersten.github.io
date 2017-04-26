@@ -12,6 +12,8 @@ typedef void(*hardware_hwi_handler)(void*, HARDWARE);
 
 typedef void(*hardware_tick_handler)(void*, HARDWARE);
 
+typedef void(*hardware_reset_handler)(HARDWARE);
+
 typedef void(*hardware_destroy_handler)(HARDWARE);
 
 struct hardware
@@ -19,6 +21,7 @@ struct hardware
 	hardware_hwq_handler hwq;
 	hardware_hwi_handler hwi;
 	hardware_tick_handler tick;
+	hardware_reset_handler reset;
 	hardware_destroy_handler destroy;
 	void* state;
 };

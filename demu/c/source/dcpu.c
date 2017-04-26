@@ -257,6 +257,11 @@ void dcpu_reset(DCPU dcpu)
 	dcpu->registers[REGISTER_IA] = 0x0000;
 
 	memset(dcpu->memory, 0, DCPU_MEMORY_SIZE);
+
+	for (int i = 0; i < dcpu->hardware_count; i++)
+	{
+		dcpu->hardware[i].reset(&dcpu->hardware[i]);
+	}
 }
 
 void dcpu_power_on(DCPU dcpu)

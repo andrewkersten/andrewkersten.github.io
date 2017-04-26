@@ -140,6 +140,26 @@ static void tick_handler(void* void_dcpu, HARDWARE hardware)
 {
 }
 
+static void reset_handler(HARDWARE hardware)
+{
+	if (hardware == NULL)
+	{
+		return;
+	}
+
+	LEM1802 lem1802 = (LEM1802)hardware->state;
+
+	if (lem1802 == NULL)
+	{
+		return;
+	}
+
+	lem1802->vram = 0x8000;
+	lem1802->fram = LEM1802_USE_DEFAULT;
+	lem1802->pram = LEM1802_USE_DEFAULT;
+	lem1802->border = 0x0;
+}
+
 static void destroy_handler(HARDWARE hardware)
 {
 	if (hardware == NULL)
@@ -160,16 +180,12 @@ void lem1802_initialize(HARDWARE hardware)
 	hardware->hwq = hwq_handler;
 	hardware->hwi = hwi_handler;
 	hardware->tick = tick_handler;
+	hardware->reset = reset_handler;
 	hardware->destroy = destroy_handler;
 
-	struct lem1802* lem1802 = malloc(sizeof(struct lem1802));
+	hardware->state = malloc(sizeof(struct lem1802));
 
-	lem1802->vram = 0x8000;
-	lem1802->fram = LEM1802_USE_DEFAULT;
-	lem1802->pram = LEM1802_USE_DEFAULT;
-	lem1802->border = 0x0;
-
-	hardware->state = lem1802;
+	reset_handler(hardware);
 }
 
 void lem1802_write_texture(HARDWARE hardware, DCPU dcpu, char* texture_data)
