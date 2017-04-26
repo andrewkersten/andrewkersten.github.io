@@ -125,3 +125,9 @@ DLLEXPORT uint16_t dcpu_get_register(DCPU dcpu, enum Register r);
  * @return A pointer to the DCPU memory, DCPU_MEMORY_SIZE bytes.
  */
 DLLEXPORT uint16_t* dcpu_memory(DCPU dcpu);
+
+/**
+ * Tick all hardware attached to the DCPU.
+ * @param dcpu The DCPU instance.
+ */
+DLLEXPORT void dcpu_tick(DCPU dcpu);

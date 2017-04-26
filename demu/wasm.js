@@ -95,7 +95,7 @@ var wasm = (function() {
 						imports.env.memoryBase = 0;
 						imports.env.memory = wasmModule.memory;
 						imports.env.tableBase = 0;
-						imports.env.table = new WebAssembly.Table({ initial: 8, element: 'anyfunc' }); // I'm not sure why this is an 'initial: 8' now.  Pulled '8' from .wast file
+						imports.env.table = new WebAssembly.Table({ initial: 16, element: 'anyfunc' }); // I'm not sure why this value changes.  I use the value I find in the .wast file I generate.
 
 						// TODO: Custom imports go here
 						imports.env.abort = wasmModule.libc.stdlib.abort; // I'm not sure why this is a required import now.  And no '_' ...
@@ -251,8 +251,8 @@ var emulator = (function() {
 		document.getElementById("RJ"),
 		document.getElementById("PC"),
 		document.getElementById("SP"),
-		document.getElementById("IA"),
 		document.getElementById("EX"),
+		document.getElementById("IA"),
 	];
 
 	var registerPrefix = [
@@ -266,8 +266,8 @@ var emulator = (function() {
 		"RJ: 0x",
 		"PC: 0x",
 		"SP: 0x",
-		"IA: 0x",
 		"EX: 0x",
+		"IA: 0x",
 	];
 
 	var running = false;
@@ -275,7 +275,8 @@ var emulator = (function() {
 	var cyclesPerFrame = 10;
 
 	var handle = null;
-	var handleLEM1802;
+	var handleLEM1802 = null;
+	var handleClock = null;
 
 	var binary = null;
 
@@ -286,10 +287,14 @@ var emulator = (function() {
 		handleLEM1802 = wasm.instance.exports["_dcpu_attach"](handle);
 		wasm.instance.exports["_lem1802_initialize"](handleLEM1802);
 
+		// Attack a clock to the DCPU
+		handleClock = wasm.instance.exports["_dcpu_attach"](handle);
+		wasm.instance.exports["_clock_initialize"](handleClock);
+
 		renderer.initialize();
 		
 		// The speed slider likes to "stick" to its previous value, force it to the default
-		var defaultSpeed = 20;
+		var defaultSpeed = 100;
 		document.getElementById("speedSlider").value = defaultSpeed;
 		emulatorModule.handleSpeedChange(defaultSpeed);
 	};
@@ -329,6 +334,7 @@ var emulator = (function() {
 	};
 
 	var emulatorDriver = function() {
+		wasm.instance.exports["_dcpu_tick"](handle);
 		wasm.instance.exports["_dcpu_process"](handle, cyclesPerFrame);
 
 		renderer.updateTexture();

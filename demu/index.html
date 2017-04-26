@@ -92,7 +92,9 @@
 		</section>
 		<div class="row emulator">
 			<label id="error" class="error"></label>
-			<canvas id="canvas" width="384" height="288">A WebGL capable browser is required to view the display.</canvas>
+			<div class="canvasContainer">
+				<canvas id="canvas" width="384" height="288">A WebGL capable browser is required to view the display.</canvas>
+			</div>
 			<p>
 				<input type="button" id="startStopButton" value="Start" onclick="emulator.handleStartStop()">
 				<input type="button" value="Cycle" onclick="emulator.handleStep()">
@@ -116,8 +118,8 @@
 				<code id="RJ" class="registerUnchanged">RJ: 0x0000</code>
 				<code id="PC" class="registerUnchanged">PC: 0x0000</code>
 				<code id="SP" class="registerUnchanged">SP: 0x0000</code>
-				<code id="IA" class="registerUnchanged">IA: 0x0000</code>
 				<code id="EX" class="registerUnchanged">EX: 0x0000</code>
+				<code id="IA" class="registerUnchanged">IA: 0x0000</code>
 			</p>
 		</div>
 		<h5 class="heading">Select a Sample:</h5>
@@ -139,7 +141,7 @@
 			</div>
 		</div>
 		<h5 class="heading" style="margin-top: 2rem;">Source of selected sample:</h5>
-		<pre><code id="sourceView"></code></pre>
+		<pre><code id="sourceView" style="overflow-x: scroll;"></code></pre>
 	</div>
 
 	<!-- Application Logic -->

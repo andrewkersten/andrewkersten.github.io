@@ -965,3 +965,16 @@ uint16_t* dcpu_memory(DCPU dcpu)
 
 	return dcpu->memory;
 }
+
+void dcpu_tick(DCPU dcpu)
+{
+	if (dcpu == NULL)
+	{
+		return;
+	}
+
+	for (int i = 0; i < dcpu->hardware_count; i++)
+	{
+		dcpu->hardware[i].tick(dcpu, &dcpu->hardware[i]);
+	}
+}
