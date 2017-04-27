@@ -16,5 +16,5 @@ enum Register
 	REGISTER_EX, // 10
 	REGISTER_IA, // 11
 
-	REGISTER_COUNT
+	REGISTER_COUNT // 12
 };

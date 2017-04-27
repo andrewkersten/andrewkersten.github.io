@@ -1,5 +1,7 @@
 #include "clock.h"
 
+#include "dcpu.h"
+
 struct clock
 {
 	uint16_t rate;
@@ -10,30 +12,26 @@ struct clock
 
 typedef struct clock* CLOCK;
 
-static void hwq_handler(void* void_dcpu, HARDWARE hardware)
+static void hwq_handler(DCPU dcpu, HARDWARE hardware)
 {
-	if (void_dcpu == NULL || hardware == NULL)
+	if (dcpu == NULL || hardware == NULL)
 	{
 		return;
 	}
 
-	DCPU dcpu = (DCPU)void_dcpu;
-
-	dcpu_set_register(dcpu, REGISTER_A, 0xB402);
-	dcpu_set_register(dcpu, REGISTER_B, 0x12D0);
-	dcpu_set_register(dcpu, REGISTER_C, 0x0001);
-	dcpu_set_register(dcpu, REGISTER_X, 0x0000);
-	dcpu_set_register(dcpu, REGISTER_Y, 0x0000);
+	dcpu_set_register(dcpu, REGISTER_A, 0xB402); // Hardware ID (LOW)
+	dcpu_set_register(dcpu, REGISTER_B, 0x12D0); // Hardware ID (HIGH)
+	dcpu_set_register(dcpu, REGISTER_C, 0x0001); // Version
+	dcpu_set_register(dcpu, REGISTER_X, 0x0000); // Manufacturer (LOW)
+	dcpu_set_register(dcpu, REGISTER_Y, 0x0000); // Manufacturer (HIGH)
 }
 
-static void hwi_handler(void* void_dcpu, HARDWARE hardware)
+static void hwi_handler(DCPU dcpu, HARDWARE hardware)
 {
-	if (void_dcpu == NULL || hardware == NULL)
+	if (dcpu == NULL || hardware == NULL)
 	{
 		return;
 	}
-
-	DCPU dcpu = (DCPU)void_dcpu;
 
 	uint16_t a = dcpu_get_register(dcpu, REGISTER_A);
 	uint16_t b = dcpu_get_register(dcpu, REGISTER_B);
@@ -75,9 +73,9 @@ static void hwi_handler(void* void_dcpu, HARDWARE hardware)
 	}
 }
 
-static void tick_handler(void* void_dcpu, HARDWARE hardware)
+static void tick_handler(DCPU dcpu, HARDWARE hardware)
 {
-	if (void_dcpu == NULL || hardware == NULL)
+	if (dcpu == NULL || hardware == NULL)
 	{
 		return;
 	}
@@ -93,7 +91,6 @@ static void tick_handler(void* void_dcpu, HARDWARE hardware)
 
 		if (clock->message != 0)
 		{
-			DCPU dcpu = (DCPU)void_dcpu;
 			dcpu_interrupt(dcpu, clock->message);
 		}
 	}

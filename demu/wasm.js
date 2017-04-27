@@ -239,6 +239,7 @@ var emulator = (function() {
 
 	var startStopButton = document.getElementById("startStopButton");
 	var speedLabel = document.getElementById("speedLabel");
+	var queueLabel = document.getElementById("queueLabel");
 
 	var registerDisplays = [
 		document.getElementById("RA"),
@@ -294,7 +295,7 @@ var emulator = (function() {
 		renderer.initialize();
 		
 		// The speed slider likes to "stick" to its previous value, force it to the default
-		var defaultSpeed = 100;
+		var defaultSpeed = 44;
 		document.getElementById("speedSlider").value = defaultSpeed;
 		emulatorModule.handleSpeedChange(defaultSpeed);
 	};
@@ -366,6 +367,8 @@ var emulator = (function() {
 
 			registerDisplays[registerIndex].innerHTML = registerValues[registerIndex];
 		}
+
+		queueLabel.textContent = "Interrupt Queue: " + wasm.instance.exports["_dcpu_queue_size"](handle) + " / 256";
 	};
 
 	emulatorModule.handleStartStop = function() {
@@ -419,7 +422,7 @@ var emulator = (function() {
 
 		cyclesPerFrame = Math.floor(Math.exp(minv + scale * (value - minp)));
 
-		speedLabel.textContent = "Emulator Speed: " + cyclesPerFrame * 60 + "Hz";
+		speedLabel.textContent = "Emulation Speed: " + cyclesPerFrame * 60 + "Hz";
 	};
 
 	return emulatorModule;

@@ -50,6 +50,16 @@
     </script>
     
     <style type="text/css">
+    	body {
+    		font-size: 2rem;
+    	}
+
+    	@media (min-width: 550px) {
+    		body {
+    			font-size: 1.5rem;
+    		}
+    	}
+
     	canvas {
     		background-color: black;
     	}
@@ -75,6 +85,10 @@
     		display: none;
     		color: red;
     	}
+    	#sourceView {
+    		max-height: 64rem;
+    		overflow: scroll;
+    	}
     </style>
 </head>
 <body>
@@ -83,11 +97,11 @@
 			<h2 class="title">DCPU-16 Emulator</h2>
 			<label>What is a DCPU-16?</label>
 			<p>
-				The DCPU-16 is a fictional 16 bit CPU designed by Markus (Notch) Persson for the game 0x10<sup>c</sup>.  This emulator was built based on the <a href="specs/dcpu-1-7.txt">V1.7 Spec Sheet</a> which has 12 registers, 36 operations, 65536 words of RAM, and a clock speed of 100KHz.  Several peripheral device specifications were released as well, including the <a href="specs/lem1802.txt">LEM1802 monitor</a> and <a href="specs/clock.txt">Generic Clock</a>.
+				The DCPU-16 is a fictional 16 bit CPU designed by Markus (Notch) Persson for the game 0x10<sup>c</sup>.  This emulator was built based on the version 1.7 <a href="specs/dcpu-1-7.txt">specification document</a> which has 12 registers, 36 operations, 65536 words of RAM, and a clock speed of 100KHz.  Several peripheral device specifications were released as well, including the <a href="specs/lem1802.txt">LEM1802 monitor</a> and <a href="specs/clock.txt">Generic Clock</a>.
 			</p>
-			<label>Specifics about the emulator:</label>
+			<label>A little bit about the emulator:</label>
 			<p>
-				This emulator is powered by my own C library, <a href="https://github.com/andrewkersten/LibDCPU16">LibDCPU16</a>, which has been compiled into a WebAssembly module to run in the browser.  LibDCPU16 implements all 36 operations of the 1.7 specification and is cycle accurate.  The library also has an API for attaching various hardware devices to the DCPU.  This emulator takes advantage of that API to provide a Generic Clock and a LEM1802 display.  The LEM1802 display is generated at 60 frames per second and rendered to the WebGL canvas below.  While the DCPU is designed to be run at 100KHz, the controls allow you to speed up, slow down, or step through the emulation and view the contents of the registers.  Try out some of the samples from down below!
+				This emulator is powered by my own C library, <a href="https://github.com/andrewkersten/LibDCPU16">LibDCPU16</a>, which has been compiled into a WebAssembly module to run in the browser.  LibDCPU16 implements all 36 operations of the 1.7 specification and is cycle accurate.  LibDCPU16 has built in support for the LEM1802 display and Generic Clock, as well as exposing an API for attaching custom devices.  This emulator attaches both devices to the DCPU and renders the LEM1802 display to a WebGL canvas.  Try out some of the samples from down below!
 			</p>
 		</section>
 		<div class="row emulator">
@@ -101,7 +115,7 @@
 				<input type="button" value="Reset" onclick="emulator.handleReset()">
 			</p>
 			<p>
-				<label id="speedLabel">Emulator Speed: 0Hz</label>
+				<label id="speedLabel">Emulation Speed: 0Hz</label>
 				<input id="speedSlider" type="range" min="1" max="100" value="10" oninput="emulator.handleSpeedChange(this.value)">
 			</p>
 			<label style="margin-top: -3rem;">Registers:</label>
@@ -121,14 +135,10 @@
 				<code id="EX" class="registerUnchanged">EX: 0x0000</code>
 				<code id="IA" class="registerUnchanged">IA: 0x0000</code>
 			</p>
+			<label id="queueLabel">Interrupt Queue: 0 / 256</label>
 		</div>
 		<h5 class="heading">Select a Sample:</h5>
 		<div class="row">
-			<div class="four columns sample">
-				<label>Hello, World!</label>
-				<p>Prints "Hello, World!" to the display.</p>
-				<button type="button" onclick="sampleSelected('hello')" style="width: 100%;">Run</button>
-			</div>
 			<div class="four columns sample">
 				<label>Stripes, Stripes, Stripes</label>
 				<p>Fill the display with colored vertical stripes.</p>
@@ -139,27 +149,33 @@
 				<p>Displays an animated Luigi sprite.  High emulation speed recomended.</p>
 				<button type="button" onclick="sampleSelected('luigi')" style="width: 100%;">Run</button>
 			</div>
+			<div class="four columns sample">
+				<label>Hello, World!</label>
+				<p>Prints "Hello, World!" to the display.</p>
+				<button type="button" onclick="sampleSelected('hello')" style="width: 100%;">Run</button>
+			</div>
 		</div>
 		<h5 class="heading" style="margin-top: 2rem;">Source of selected sample:</h5>
-		<pre><code id="sourceView" style="overflow-x: scroll;"></code></pre>
+		<pre><code id="sourceView"></code></pre>
 	</div>
 
 	<!-- Application Logic -->
 	<script type="text/javascript" src="wasm.js"></script>
 	<script type="text/javascript">
-		if (window.WebAssembly == null) {
+		if (window.WebAssembly) {
+			wasm.createInstance("demu.wasm").then(function() {
+				emulator.initialize();
+			});
+		}
+		else {
 			var errorLabel = document.getElementById("error");
 			errorLabel.textContent = "Your browser doesn't support WebAssembly.";
 			errorLabel.style.display = "block";
 		}
 
-		wasm.createInstance("demu.wasm").then(function() {
-			emulator.initialize();
-			sampleSelected("luigi");
-		});
-
 		function sampleSelected(name) {
 			emulator.runSample("samples/" + name + ".bin");
+
 			fetch("samples/" + name + ".asm").then(function(response) {
 				response.text().then(function(text) {
 					document.getElementById("sourceView").textContent = text;

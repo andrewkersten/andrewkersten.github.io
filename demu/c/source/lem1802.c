@@ -72,14 +72,12 @@ struct lem1802
 
 typedef struct lem1802* LEM1802;
 
-static void hwq_handler(void* void_dcpu, HARDWARE hardware)
+static void hwq_handler(DCPU dcpu, HARDWARE hardware)
 {
-	if (void_dcpu == NULL || hardware == NULL)
+	if (dcpu == NULL || hardware == NULL)
 	{
 		return;
 	}
-
-	DCPU dcpu = (DCPU)void_dcpu;
 
 	dcpu_set_register(dcpu, REGISTER_A, 0xF615);
 	dcpu_set_register(dcpu, REGISTER_B, 0x7349);
@@ -88,14 +86,12 @@ static void hwq_handler(void* void_dcpu, HARDWARE hardware)
 	dcpu_set_register(dcpu, REGISTER_Y, 0x1C6C);
 }
 
-static void hwi_handler(void* void_dcpu, HARDWARE hardware)
+static void hwi_handler(DCPU dcpu, HARDWARE hardware)
 {
-	if (void_dcpu == NULL || hardware == NULL)
+	if (dcpu == NULL || hardware == NULL)
 	{
 		return;
 	}
-
-	DCPU dcpu = (DCPU)void_dcpu;
 
 	uint16_t a = dcpu_get_register(dcpu, REGISTER_A);
 	uint16_t b = dcpu_get_register(dcpu, REGISTER_B);
@@ -136,7 +132,7 @@ static void hwi_handler(void* void_dcpu, HARDWARE hardware)
 	}
 }
 
-static void tick_handler(void* void_dcpu, HARDWARE hardware)
+static void tick_handler(DCPU dcpu, HARDWARE hardware)
 {
 }
 

@@ -6,6 +6,19 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define VERIFY_HANDLE(handle) ({\
+	if ((handle) == NULL) \
+	{ \
+		if (DCPU_ERROR_HANDLER) \
+		{ \
+			DCPU_ERROR_HANDLER(NULL, DCPU_ERROR_NULL_HANDLE); \
+		} \
+		return; \
+	} \
+})
+
+static dcpu_error_handler DCPU_ERROR_HANDLER = NULL;
+
 /** A lookup table for the cost in cycles to process an operand. */
 static const size_t operand_cost[] = {
 	0, 0, 0, 0, 0, 0, 0, 0, // 0x00 - 0x07: register
@@ -214,10 +227,7 @@ DCPU dcpu_create(void)
 
 void dcpu_destroy(DCPU dcpu)
 {
-	if (dcpu == NULL)
-	{
-		return;
-	}
+	VERIFY_HANDLE(dcpu);
 
 	interrupt_queue_destroy(dcpu->interrupt_queue);
 
@@ -230,10 +240,7 @@ void dcpu_destroy(DCPU dcpu)
 
 void dcpu_reset(DCPU dcpu)
 {
-	if (dcpu == NULL)
-	{
-		return;
-	}
+	VERIFY_HANDLE(dcpu);
 
 	dcpu->fire = FALSE;
 	dcpu->skip = FALSE;
@@ -266,10 +273,7 @@ void dcpu_reset(DCPU dcpu)
 
 void dcpu_power_on(DCPU dcpu)
 {
-	if (dcpu == NULL)
-	{
-		return;
-	}
+	VERIFY_HANDLE(dcpu);
 
 	//dcpu_reset(dcpu);
 	dcpu->running = TRUE;
@@ -277,20 +281,14 @@ void dcpu_power_on(DCPU dcpu)
 
 void dcpu_power_off(DCPU dcpu)
 {
-	if (dcpu == NULL)
-	{
-		return;
-	}
+	VERIFY_HANDLE(dcpu);
 
 	dcpu->running = FALSE;
 }
 
 void dcpu_flash(DCPU dcpu, char* bytes, size_t length)
 {
-	if (dcpu == NULL)
-	{
-		return;
-	}
+	VERIFY_HANDLE(dcpu);
 
 	if (dcpu->running == TRUE)
 	{
@@ -312,6 +310,11 @@ HARDWARE dcpu_attach(DCPU dcpu)
 {
 	if (dcpu == NULL)
 	{
+		if (DCPU_ERROR_HANDLER)
+		{
+			DCPU_ERROR_HANDLER(dcpu, DCPU_ERROR_NULL_HANDLE);
+		}
+
 		return NULL;
 	}
 
@@ -436,10 +439,7 @@ static void decode_instruction(DCPU dcpu)
 
 void dcpu_cycle(DCPU dcpu)
 {
-	if (dcpu == NULL)
-	{
-		return;
-	}
+	VERIFY_HANDLE(dcpu);
 
 	if (dcpu->running == FALSE || dcpu->fire == TRUE)
 	{
@@ -917,10 +917,7 @@ void dcpu_cycle(DCPU dcpu)
 
 void dcpu_process(DCPU dcpu, size_t cycles)
 {
-	if (dcpu == NULL)
-	{
-		return;
-	}
+	VERIFY_HANDLE(dcpu);
 
 	for (size_t i = 0; i < cycles; i++)
 	{
@@ -930,10 +927,7 @@ void dcpu_process(DCPU dcpu, size_t cycles)
 
 void dcpu_interrupt(DCPU dcpu, uint16_t message)
 {
-	if (dcpu == NULL)
-	{
-		return;
-	}
+	VERIFY_HANDLE(dcpu);
 
 	if (interrupt_queue_push(dcpu->interrupt_queue, message) == FALSE)
 	{
@@ -943,10 +937,7 @@ void dcpu_interrupt(DCPU dcpu, uint16_t message)
 
 void dcpu_set_register(DCPU dcpu, enum Register r, uint16_t value)
 {
-	if (dcpu == NULL)
-	{
-		return;
-	}
+	VERIFY_HANDLE(dcpu);
 
 	dcpu->registers[r] = value;
 }
@@ -955,6 +946,11 @@ uint16_t dcpu_get_register(DCPU dcpu, enum Register r)
 {
 	if (dcpu == NULL)
 	{
+		if (DCPU_ERROR_HANDLER)
+		{
+			DCPU_ERROR_HANDLER(dcpu, DCPU_ERROR_NULL_HANDLE);
+		}
+
 		return 0;
 	}
 
@@ -965,6 +961,11 @@ uint16_t* dcpu_memory(DCPU dcpu)
 {
 	if (dcpu == NULL)
 	{
+		if (DCPU_ERROR_HANDLER)
+		{
+			DCPU_ERROR_HANDLER(dcpu, DCPU_ERROR_NULL_HANDLE);
+		}
+
 		return NULL;
 	}
 
@@ -973,13 +974,30 @@ uint16_t* dcpu_memory(DCPU dcpu)
 
 void dcpu_tick(DCPU dcpu)
 {
-	if (dcpu == NULL)
-	{
-		return;
-	}
+	VERIFY_HANDLE(dcpu);
 
 	for (int i = 0; i < dcpu->hardware_count; i++)
 	{
 		dcpu->hardware[i].tick(dcpu, &dcpu->hardware[i]);
 	}
+}
+
+void dcpu_on_error(dcpu_error_handler error_handler)
+{
+	DCPU_ERROR_HANDLER = error_handler;
+}
+
+size_t dcpu_queue_size(DCPU dcpu)
+{
+	if (dcpu == NULL)
+	{
+		if (DCPU_ERROR_HANDLER)
+		{
+			DCPU_ERROR_HANDLER(dcpu, DCPU_ERROR_NULL_HANDLE);
+		}
+
+		return 0;
+	}
+	
+	return dcpu->interrupt_queue->count;
 }

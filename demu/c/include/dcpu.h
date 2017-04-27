@@ -13,16 +13,28 @@
 #define DCPU_HARDWARE_CAPACITY 16
 
 /** The size of RAM in bytes. */
-#define DCPU_MEMORY_SIZE 131072 // 65536 words * 2 bytes per word
-
-/** The speed of the DCPU. */
-#define DCPU_CYCLES_PER_SECOND 100000
+#define DCPU_MEMORY_SIZE 131072 // 65536 (0x10000) words * 2 bytes per word
 
 /** Declare the private structure. */
 struct dcpu;
 
 /** An opaque handle to a DCPU. */
 typedef struct dcpu* DCPU;
+
+enum dcpu_error
+{
+	DCPU_ERROR_NULL_HANDLE,
+	DCPU_ERROR_INVALID_OPCODE,
+};
+
+typedef enum dcpu_error DCPU_ERROR;
+
+/**
+ * The error handler will be called whenever the dcpu encounters an error.
+ * @param dcpu The DCPU instance.
+ * @param error The error condition encountered.
+ */
+typedef void(*dcpu_error_handler)(DCPU dcpu, DCPU_ERROR error);
 
 /**
  * Allocates and initializes a DCPU.
@@ -131,3 +143,11 @@ DLLEXPORT uint16_t* dcpu_memory(DCPU dcpu);
  * @param dcpu The DCPU instance.
  */
 DLLEXPORT void dcpu_tick(DCPU dcpu);
+
+/**
+ * Set the error handler callback for all DCPU instances.
+ * @param error_handler The error handler.
+ */
+DLLEXPORT void dcpu_on_error(dcpu_error_handler error_handler);
+
+size_t dcpu_queue_size(DCPU dcpu);
