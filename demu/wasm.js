@@ -298,6 +298,8 @@ var emulator = (function() {
 		var defaultSpeed = 44;
 		document.getElementById("speedSlider").value = defaultSpeed;
 		emulatorModule.handleSpeedChange(defaultSpeed);
+
+		emulatorModule.runSample("samples/stripes.bin", false);
 	};
 
 	var startRunning = function() {
@@ -313,7 +315,7 @@ var emulator = (function() {
 		running = false;
 	};
 
-	emulatorModule.runSample = function(url) {
+	emulatorModule.runSample = function(url, run = true) {
 		fetch(url).then(function(response) {
 			response.arrayBuffer().then(function(buffer) {
 				binary = buffer;
@@ -327,9 +329,10 @@ var emulator = (function() {
 				wasm.instance.exports["_dcpu_flash"](handle, ptr, buffer.byteLength);
 				wasm.instance.exports["_dcpu_power_on"](handle);
 
-				startRunning();
-
-				console.log("running: " + url);
+				if (run)
+				{
+					startRunning();
+				}
 			});
 		});
 	};
