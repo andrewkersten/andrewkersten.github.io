@@ -367,8 +367,6 @@ var emulator = (function() {
 
 			registerDisplays[registerIndex].innerHTML = registerValues[registerIndex];
 		}
-
-		queueLabel.textContent = "Interrupt Queue: " + wasm.instance.exports["_dcpu_queue_size"](handle) + " / 256";
 	};
 
 	emulatorModule.handleStartStop = function() {

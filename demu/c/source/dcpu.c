@@ -386,11 +386,11 @@ static uint16_t* operand_address(DCPU dcpu, uint16_t operand, BOOLINT is_operand
 	case 0x18: // POP [SP++] / PUSH [SP--]
 		if (is_operand_a) // POP [SP++]
 		{
-			return &dcpu->memory[++dcpu->registers[REGISTER_SP]];
+			return &dcpu->memory[dcpu->registers[REGISTER_SP]++];
 		}
 		else // PUSH [SP--]
 		{
-			return &dcpu->memory[dcpu->registers[REGISTER_SP]--];
+			return &dcpu->memory[--dcpu->registers[REGISTER_SP]];
 		}
 	case 0x19: // PEEK [SP]
 		return &dcpu->memory[dcpu->registers[REGISTER_SP]];
@@ -414,6 +414,11 @@ static uint16_t* operand_address(DCPU dcpu, uint16_t operand, BOOLINT is_operand
 static void dcpu_push(DCPU dcpu, uint16_t value)
 {
 	dcpu->memory[--dcpu->registers[REGISTER_SP]] = value;
+}
+
+static uint16_t dcpu_pop(DCPU dcpu)
+{
+	return dcpu->memory[dcpu->registers[REGISTER_SP]++];
 }
 
 static void dcpu_operation_cost(DCPU dcpu)
@@ -528,7 +533,8 @@ void dcpu_cycle(DCPU dcpu)
 							{
 								case 0x01: // JSR
 								{
-									dcpu->memory[dcpu->registers[REGISTER_SP]--] = dcpu->registers[REGISTER_PC];
+									dcpu_push(dcpu, dcpu->registers[REGISTER_PC]);
+									//dcpu->memory[dcpu->registers[REGISTER_SP]--] = dcpu->registers[REGISTER_PC];
 									dcpu->registers[REGISTER_PC] = *dcpu->operand_a;
 									break;
 								}
@@ -551,8 +557,11 @@ void dcpu_cycle(DCPU dcpu)
 								{
 									dcpu->queue_interrupts = FALSE;
 
-									dcpu->registers[REGISTER_A] = dcpu->memory[dcpu->registers[REGISTER_SP]++];
-									dcpu->registers[REGISTER_PC] = dcpu->memory[dcpu->registers[REGISTER_SP]++];
+									dcpu->registers[REGISTER_A] = dcpu_pop(dcpu);
+									dcpu->registers[REGISTER_PC] = dcpu_pop(dcpu);
+
+									//dcpu->registers[REGISTER_A] = dcpu->memory[dcpu->registers[REGISTER_SP]++];
+									//dcpu->registers[REGISTER_PC] = dcpu->memory[dcpu->registers[REGISTER_SP]++];
 
 									break;
 								}
@@ -877,6 +886,8 @@ void dcpu_cycle(DCPU dcpu)
 			{
 				decode_instruction(dcpu);
 
+				uint16_t SP = dcpu->registers[REGISTER_SP];
+
 				// Looking up operand addresses will advance REGISTER_PC over
 				// extra words used in the instruction.  (Instructions are 1-3
 				// words long)
@@ -888,6 +899,8 @@ void dcpu_cycle(DCPU dcpu)
 				{
 					unused = operand_address(dcpu, dcpu->operand_code_b, FALSE);
 				}
+
+				dcpu->registers[REGISTER_SP] = SP;
 
 				// If the instruction is an IF instruction we will skip an
 				// additional instruction.  Otherwise we can go ahead and switch
@@ -998,6 +1011,6 @@ size_t dcpu_queue_size(DCPU dcpu)
 
 		return 0;
 	}
-	
+
 	return dcpu->interrupt_queue->count;
 }

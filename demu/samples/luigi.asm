@@ -1,24 +1,64 @@
-; Have the LEM1802 use a custom color palette
-SET A, 0x0002
-SET B, PALETTE
-HWI 0x0000
+// ----------------------------------------------------------------
+// Find the LEM1802 and Generic Clock handles
+// ----------------------------------------------------------------
 
-; Set the clock to trigger 60 / B times per second
-SET A, 0x0000
-SET B, 0x0005
-HWI 0x0001
+// LEM1802
+SET PUSH, 0xF615
+SET PUSH, 0x7349
+SET PUSH, 0x1802
+SET PUSH, 0x8B36
+SET PUSH, 0x1C6C
+JSR FIND_DEVICE
+SET [LEM1802], A
 
-; Set the clock to trigger interrupt on ticks
-SET A, 0x0002
-SET B, 0xBEEF
-HWI 0x0001
+// LEM1802 not attached
+IFE A, 0xFFFF
+	SET PC, HANG
+
+// Generic Clock
+SET PUSH, 0xB402
+SET PUSH, 0x12D0
+SET PUSH, 0x0001
+SET PUSH, 0x0000
+SET PUSH, 0x0000
+JSR FIND_DEVICE
+SET [CLOCK], A
+
+// Generic Clock not attached
+IFE A, 0xFFFF
+	SET PC, HANG
+
+// ----------------------------------------------------------------
+// Configure LEM1802 and Generic Clock
+// ----------------------------------------------------------------
 
 IAS INTERRUPT_HANDLER
 
-SET Z, 0x0000
+// Use a custom color palette
+SET A, 0x0002
+SET B, PALETTE
+HWI [LEM1802]
+
+// Set the clock to trigger 60 / B times per second
+SET A, 0x0000
+SET B, 0x0005
+HWI [CLOCK]
+
+// Set the clock to trigger interrupt on ticks
+SET A, 0x0002
+SET B, 0xFFFF // Message not used
+HWI [CLOCK]
+
+// ----------------------------------------------------------------
+// Do nothing while waiting for interrupts
+// ----------------------------------------------------------------
 
 HANG:
 	SET PC, HANG
+
+// ----------------------------------------------------------------
+// Interrupt handler: Draw the frame
+// ----------------------------------------------------------------
 
 INTERRUPT_HANDLER:
 
@@ -26,7 +66,7 @@ SET I, 0x0000
 SET X, 0x8028
 
 SET Y, 0x00A0
-MUL Y, Z
+MUL Y, [CURRENT_FRAME]
 ADD Y, FRAME0
 
 SET A, 0x0000
@@ -56,12 +96,78 @@ LOOP:
 	IFL I, 0x00A0
 		SET PC, LOOP
 
-	ADD Z, 0x0001
-	IFE Z, 0x0004
-		SET Z, 0x0000
+	ADD [CURRENT_FRAME], 0x0001
+	IFE [CURRENT_FRAME], 0x0004
+		SET [CURRENT_FRAME], 0x0000
 
 	RFI A
-	;SET PC, HANG
+
+// ----------------------------------------------------------------
+// Function: Find the handle to a specific device
+// ----------------------------------------------------------------
+
+// Expects hardware details to be pushed on the stack:
+//
+// Hardware ID (LOW)
+// Hardware ID (HIGH)
+// Version
+// Manufacturer (LOW)
+// Manufacturer (HIGH)
+//
+// The function will pop these values off the stack before exiting
+//
+// Returns the device handle or 0xFFFF if it isn't found
+
+FIND_DEVICE:
+	HWN Z
+
+	FIND_DEVICE_LOOP:
+		IFE Z, 0x0000
+			SET PC, FIND_DEVICE_RETURN
+
+		SUB Z, 0x0001
+		HWQ Z
+
+		IFN PICK 0x0005, A
+			SET PC, FIND_DEVICE_LOOP
+
+		IFN PICK 0x0004, B
+			SET PC, FIND_DEVICE_LOOP
+
+		IFN PICK 0x0003, C
+			SET PC, FIND_DEVICE_LOOP
+
+		IFN PICK 0x0002, X
+			SET PC, FIND_DEVICE_LOOP
+
+		IFN PICK 0x0001, Y
+			SET PC, FIND_DEVICE_LOOP
+
+	FIND_DEVICE_RETURN:
+		SET B, POP
+
+		SET A, POP
+		SET A, POP
+		SET A, POP
+		SET A, POP
+		SET A, POP
+
+		SET A, Z
+
+		SET PC, B
+
+// ----------------------------------------------------------------
+// DATA
+// ----------------------------------------------------------------
+
+LEM1802:
+	DAT 0xFFFF
+
+CLOCK:
+	DAT 0xFFFF
+
+CURRENT_FRAME:
+	DAT 0x0000
 
 PALETTE:
 	DAT 0x0999, 0x0041, 0x00B5, 0x00F7, 0x0000, 0x0851, 0x0F82, 0x0FC9, 0x0D93, 0x0FD6, 0x0FFF, 0x0307, 0x062F, 0x096F, 0x0000, 0x0000
