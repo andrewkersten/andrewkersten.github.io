@@ -299,7 +299,13 @@ var emulator = (function() {
 		document.getElementById("speedSlider").value = defaultSpeed;
 		emulatorModule.handleSpeedChange(defaultSpeed);
 
+		// Load stripes sample as default, don't run it
 		emulatorModule.runSample("samples/stripes.bin", false);
+		fetch("samples/stripes.asm").then(function(response) {
+			response.text().then(function(text) {
+				document.getElementById("sourceView").textContent = text;
+			});
+		});
 	};
 
 	var startRunning = function() {
