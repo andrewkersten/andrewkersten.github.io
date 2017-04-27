@@ -158,7 +158,7 @@
 		}
 		else {
 			var errorLabel = document.getElementById("error");
-			errorLabel.textContent = "Your browser doesn't support WebAssembly.";
+			errorLabel.innerHTML = "Your browser doesn't support WebAssembly.<br />WebAssembly is available in Chrome 57+ and Firefox 52+.";
 			errorLabel.style.display = "block";
 		}
 
