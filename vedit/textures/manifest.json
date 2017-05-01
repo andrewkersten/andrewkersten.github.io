@@ -1,0 +1,59 @@
+{
+    "textures": [
+        {
+            "path": "textures/terrain/Texture_dirt_1_1024.png",
+            "name": "Texture_dirt_1_1024",
+            "hash": -1345382110
+        },
+        {
+            "path": "textures/terrain/Dirt_01.png",
+            "name": "Dirt_01",
+            "hash": -1172865602
+        },
+        {
+            "path": "textures/terrain/Sand_01.png",
+            "name": "Sand_01",
+            "hash": -1096500037
+        },
+        {
+            "path": "textures/terrain/Water.png",
+            "name": "Water",
+            "hash": -769956426
+        },
+        {
+            "path": "textures/terrain/grass_01.png",
+            "name": "grass_01",
+            "hash": -700660385
+        },
+        {
+            "path": "textures/terrain/Sand_02.png",
+            "name": "Sand_02",
+            "hash": -604215242
+        },
+        {
+            "path": "textures/terrain/Cracked_Earth.png",
+            "name": "Cracked_Earth",
+            "hash": -552689531
+        },
+        {
+            "path": "textures/terrain/Stone_floor_n.tga",
+            "name": "Stone_floor_n",
+            "hash": -386360519
+        },
+        {
+            "path": "textures/terrain/Texture_dirt_2_1024.png",
+            "name": "Texture_dirt_2_1024",
+            "hash": -131965746
+        },
+        {
+            "path": "textures/terrain/Dry grass_01.png",
+            "name": "Dry grass_01",
+            "hash": 436165560
+        },
+        {
+            "path": "textures/terrain/Stone_floor.tga",
+            "name": "Stone_floor",
+            "hash": 633899915
+        }
+    ]
+}

@@ -1,0 +1,10 @@
+{
+    "shaders": [
+        {
+        	"name": "white",
+        	"hash": "-611385325",
+            "vertex": "shaders/white.vert.glsl",
+            "fragment": "shaders/white.frag.glsl"
+        }
+    ]
+}

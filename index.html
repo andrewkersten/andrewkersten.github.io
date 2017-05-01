@@ -12,7 +12,8 @@
 
     <!-- Font -->
     <!--<link href='//fonts.googleapis.com/css?family=Raleway:400,300,600' rel='stylesheet' type='text/css'>-->
-    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+    <!--<link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet"> -->
+    <link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
 
     <!-- CSS -->
     <link rel="stylesheet" href="css/normalize.css">
@@ -50,8 +51,8 @@
                 <ul class="navbar-list">
                 <li class="navbar-item"><a class="navbar-link" href="#Skills">Skills</a></li>
                     <li class="navbar-item"><a class="navbar-link" href="#Portfolio">Portfolio</a></li>
-                    <li class="navbar-item"><a class="navbar-link" href="#GitHub">GitHub</a></li>
-                    <li class="navbar-item"><a class="navbar-link" style="margin-right: 0px;" href="#Resume">Resume</a></li>
+                    <li class="navbar-item"><a class="navbar-link" href="https://github.com/andrewkersten">GitHub</a></li>
+                    <li class="navbar-item"><a class="navbar-link" style="margin-right: 0px;" href="https://drive.google.com/file/d/0B2IH5B0ASCsgV1JFdXppZzBjdkU/view?usp=sharing">Resume</a></li>
                 </ul>
             </div>
         </nav>
@@ -59,64 +60,58 @@
         <div class="docs-section" id="Skills">
             <h6 class="docs-header">Skills</h6>
             <p>
-                I am experienced with both C and Java as well as being comfortable writing C#, GLSL, C++, and SQL.  I have also experimented with Python, Javascript, x86 Assembly, and Dart.  I have created applications for Windows, Linux, and Android devices.  Additionally I have used AWS and Google Compute Engine to launch a variety of Linux servers used for databases, web applications, and game servers.
+                I am experienced with both C and Java and have written code in C#, GLSL, C++, SQL, and Javascript.  I have created applications for Windows, Linux, and Android devices as well as for the web.  I have used Amazon Web Services and Google Compute Engine to run Linux servers used for databases, web applications, and games.  My passion for computer graphics and games has given me experience with object oriented design, data oriented design, measuring and improving code performance, and strong logical thinking and problem solving abilities.
             </p>
         </div>
 
         <div class="docs-section" id="Portfolio">
-            <h6 class="docs-header">Portfolio</h6>
-            <ul>
-                <li style="margin-bottom: 4em;">
-                    <p class="project-header">Voxel Editor</p>
-                    <p>The goal of Voxel Editor was to create an environment comfortable for an average gamer to design voxel models in.  Voxel Editor features a first person camera and intuitive controls.  The editor exports models in the <a href="https://ephtracy.github.io/index.html?page=mv_vox_format">.vox format</a> making it compatible with other popular voxel editors.  Additionally the editor can procedurally generate terrain using simplex noise.</p>
-                    <img width="100%" src="images/voxel1.png">
-                    <table width="100%">
-                        <tr>
-                            <td style="width: 33%"><img width="100%" src="images/voxel2.png"></td>
-                            <td style="width: 34%"><img width="100%" src="images/voxel3.png"></td>
-                            <td style="width: 33%"><img width="100%" src="images/voxel4.png"></td>
-                        </tr>
-                    </table>
-                </li>
-                <li style="margin-bottom: 4em;">
-                    <p class="project-header">Stardew Patcher</p>
-                    <p>Stardew Patcher is a C# application that modifies the MSIL bytecode of <A href="http://stardewvalley.net/">Stardew Valley</a> to fix several bugs with the 1.03 release.</p>
-                    <ul>
-                        <li>The public release accumulated over 10,000 downloads.</li>
-                        <li>The modified executable is created in memory without needing to overwrite any game files.</li>
-                        <li>The patch was released only two days after the game launched and several days before an official patch was available.</li>
-                    </ul>
-                    <a href="https://bitbucket.org/ghillielead/stardew-valley-patcher/downloads">Downloads Page</a>
-                    <br/>
-                    <a href="https://bitbucket.org/ghillielead/stardew-valley-patcher/">BitBucket Repository</a>
-                </li>
-                <li style="margin-bottom: 4em;">
-                    <p class="project-header">LibDCPU16</p>
-                    <p>LibDCPU16 is a C library for emulating the DCPU-16 processor.  The emulator is cycle accurate and compatible with the <a href="https://raw.githubusercontent.com/gatesphere/demi-16/master/docs/dcpu-specs/dcpu-1-7.txt">DCPU 1.7 Specification</a> instruction set.  The images below are simple sample programs that write to RAM that is mapped to the LEM1802 monitor.</p>
-                    <center>
-                        <table width="60%">
-                            <tr>
-                                <td style="text-align: center;"><img src="images/emu1.png"></td>
-                                <td style="text-align: center;"><img src="images/emu2.png"></td>
-                                <td style="text-align: center;"><img src="images/emu3.png"></td>
-                            </tr>
-                        </table>
-                    </center>
-                    <p>The snippet below shows the assembly for the "Hello, World!" sample above.</p>
-                    <script src="https://gist.github.com/andrewkersten/2fb416e498f5df93de877869106e2f4c.js"></script>
-                </li>
-            </ul>
+            <div style="margin-bottom: 4em;">
+                <p class="project-header">LibDCPU16</p>
+                <p>LibDCPU16 is a C library for emulating the 16 bit DCPU-16 processor.  An interractive emulator is available at <a href="http://andrewkersten.com/demu/">http://andrewkersten.com/demu/</a>.  The emulator is powered by LibDCPU16, which has been compiled into a WebAssembly module to run in the browser.  A bit about the library:</p>
+                <ul>
+                    <li>Emulation is cycle accurate.  Every instruction is processed one cycle at a time.</li>
+                    <li>Every feature and instruction from the <a href="http://andrewkersten.com/demu/specs/dcpu-1-7.txt">specification sheet</a> is fully implemented.</li>
+                    <li>Supports the LEM1802 Monitor and Generic Clock hardware devices.</li>
+                    <li>An API for attaching custom hardware devices is available.</li>
+                    <li>Tested on Windows/Linux/Web.  It should compile just about anywhere.</li>
+                    <li>Doxygen <a href="">documentation</a> included in the GitHub repository.</li>
+                </ul>
+            </div>
+            <div style="margin-bottom: 4em;">
+                <p class="project-header">Voxel Editor</p>
+                <p>Voxel Editor was created to be intuitive for an average gamer to design voxel models in.  The editor features a first person camera and intuitive controls.  The editor exports models in the <a href="https://ephtracy.github.io/index.html?page=mv_vox_format">.vox format</a> making it compatible with other voxel editors.  Additionally the editor can procedurally generate terrain using simplex noise.</p>
+                <img width="100%" src="images/voxel1.png">
+                <table width="100%">
+                    <tr>
+                        <td style="width: 33%"><img width="100%" src="images/voxel2.png"></td>
+                        <td style="width: 34%"><img width="100%" src="images/voxel3.png"></td>
+                        <td style="width: 33%"><img width="100%" src="images/voxel4.png"></td>
+                    </tr>
+                </table>
+            </div>
+            <div>
+                <p class="project-header">Stardew Patcher</p>
+                <p>Stardew Patcher is a C# application that modifies the MSIL bytecode of <A href="http://stardewvalley.net/">Stardew Valley</a> to fix several bugs with the 1.03 release.  I decompiled the game and used stack dumps to track down and fix several bugs I encountered.</p>
+                <ul>
+                    <li>The public release accumulated over 10,000 downloads.</li>
+                    <li>The modified executable is created in memory without needing to overwrite any game files.</li>
+                    <li>The patch was released shortly after the game launched and several days before an official patch was available.</li>
+                </ul>
+                <a href="https://bitbucket.org/ghillielead/stardew-valley-patcher/downloads">Downloads Page</a>
+                <br/>
+                <a href="https://bitbucket.org/ghillielead/stardew-valley-patcher/">BitBucket Repository</a>
+            </div>
         </div>
 
         <div class="docs-section" id="GitHub">
             <h6 class="docs-header">GitHub</h6>
-            <p>Source code for all portfolio projects is available at <a href="https://github.com/andrewkersten">https://github.com/andrewkersten</a>.</p>
+            <p>Source code for select projects is available at <a href="https://github.com/andrewkersten">https://github.com/andrewkersten</a>.</p>
         </div>
 
-        <div class="docs-section" id="Resume">
+        <div class="docs-section" id="Resume" style="margin-bottom: 18rem;">
             <h6 class="docs-header">Resume</h6>
             <center>
-                <a class="button button-primary" href="https://drive.google.com/file/d/0B2IH5B0ASCsgNm52OUhXRjZGRnc/view?usp=sharing">Download Resume as PDF</a>
+                <a class="button button-primary" href="https://drive.google.com/file/d/0B2IH5B0ASCsgV1JFdXppZzBjdkU/view?usp=sharing" style="font-size: 1.5rem; text-transform: none; font-weight: 100;">Download Resume as PDF</a>
             </center>
         </div>
     </div>
