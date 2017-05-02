@@ -1,0 +1,1 @@
+CSS fix, changed 'head' partial to use root site links to css files.

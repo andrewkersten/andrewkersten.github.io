@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Andrew Kersten</title>
+    <link>http://andrewkersten.bitbucket.org/</link>
+    <description>Recent content on Andrew Kersten</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 08 Oct 2015 09:01:57 -0500</lastBuildDate>
+    <atom:link href="http://andrewkersten.bitbucket.org/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Meshing Colored Voxel Terrain</title>
+      <link>http://andrewkersten.bitbucket.org/blog/voxel_meshing/</link>
+      <pubDate>Thu, 08 Oct 2015 09:01:57 -0500</pubDate>
+      
+      <guid>http://andrewkersten.bitbucket.org/blog/voxel_meshing/</guid>
+      <description>&lt;p&gt;&lt;img src=&#34;http://andrewkersten.bitbucket.org/blog/voxel_meshing/2015281091457.png&#34; alt=&#34;Image of voxel terrain with wireframe&#34; /&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Resume</title>
+      <link>http://andrewkersten.bitbucket.org/resume/</link>
+      <pubDate>Thu, 08 Oct 2015 08:59:25 -0500</pubDate>
+      
+      <guid>http://andrewkersten.bitbucket.org/resume/</guid>
+      <description>&lt;p&gt;Page under construction.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Portfolio</title>
+      <link>http://andrewkersten.bitbucket.org/portfolio/</link>
+      <pubDate>Thu, 08 Oct 2015 08:59:17 -0500</pubDate>
+      
+      <guid>http://andrewkersten.bitbucket.org/portfolio/</guid>
+      <description>&lt;div style=&#34;border: 1px solid #DDDDDD; padding-left: 16px; padding-right: 16px;&#34;&gt;
+&lt;h3 id=&#34;voxel-editor:08e0386ce22622b66038f29292f02cb1&#34;&gt;Voxel Editor&lt;/h3&gt;
+
+&lt;p&gt;A custom voxel editor tool was needed to create models for the voxel project.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.google.com&#34;&gt;&lt;img src=&#34;http://andrewkersten.bitbucket.org/images/2015289014722.png&#34; alt=&#34;Voxel Editor Screenshot&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;voxel-terrain:08e0386ce22622b66038f29292f02cb1&#34;&gt;Voxel Terrain&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://andrewkersten.bitbucket.org/images/2015286143438.png&#34; alt=&#34;Voxel Terrain Screenshot&#34; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;technical-voxel-blog-posts:08e0386ce22622b66038f29292f02cb1&#34;&gt;Technical Voxel Blog Posts:&lt;/h3&gt;
+
+&lt;p&gt;Each of these posts detail the final algorithms and process used, but also alternative methods experimented with and problems overcome along the way.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#&#34;&gt;Generating Colored Voxel Terrain&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#&#34;&gt;Meshing Colored Voxel Volumes&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#&#34;&gt;Rendering Colored Voxel Terrain&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;/div&gt;
+
+&lt;p&gt;&lt;div style=&#34;border: 1px solid #DDDDDD; padding-left: 16px; padding-right: 16px;&#34;&gt;
+&lt;h3 id=&#34;dcpu-16-toolkit:08e0386ce22622b66038f29292f02cb1&#34;&gt;DCPU-16 Toolkit&lt;/h3&gt;
+
+&lt;p&gt;The DCPU-16 Toolkit consists of an assembler, disassembler, and an emulator.&lt;/p&gt;
+
+&lt;h3 id=&#34;what-is-a-dcpu-16:08e0386ce22622b66038f29292f02cb1&#34;&gt;What is a DCPU-16?&lt;/h3&gt;
+
+&lt;p&gt;The DCPU-16 is a fictional 16 bit processor created for the game 0x10c.  The DCPU-16 has 16 bit words, 0x10000 words of RAM, 8 registers, and runs at 100kHz.  The full spec is available &lt;a href=&#34;#&#34;&gt;here&lt;/a&gt;.  There are several hardware devices designed for the DCPU-16, including a monitor, keyboard, and clock.&lt;/p&gt;
+
+&lt;h3 id=&#34;emulator:08e0386ce22622b66038f29292f02cb1&#34;&gt;Emulator&lt;/h3&gt;
+
+&lt;p&gt;The emulator is a Windows console application written in C.  The emulator fully implements the DCPU-16 1.7 spec along with the LEM1802 monitor, generic keyboard, and generic clock.    With the emulator you can configure what hardware is attached the DCPU, load a binary to execute, and start and stop emulation.  Each monitor connected to the DCPU is displayed in a seperate window.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://andrewkersten.bitbucket.org/images/emulator_ui.png&#34; alt=&#34;DCPU-16 Emulator UI&#34; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;assembler-and-disassembler:08e0386ce22622b66038f29292f02cb1&#34;&gt;Assembler and Disassembler&lt;/h3&gt;
+
+&lt;p&gt;The assembler takes a DCPU-16 assembly source file as input and outputs a binary file that is executable by the emulator.  The assembler recognizes all 36 opcodes of the 1.7 spec as well as comments, labels, and the DAT directive.&lt;/p&gt;
+
+&lt;p&gt;The disassembler goes the other way, taking a binary file as input and outputing an assembly source file.&lt;/p&gt;
+
+&lt;h3 id=&#34;sample-programs:08e0386ce22622b66038f29292f02cb1&#34;&gt;Sample Programs&lt;/h3&gt;
+
+&lt;p&gt;The following samples were created while testing the emulator and assembler.&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&#34;center&#34;&gt;Hello&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;Font Dump&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;Hex Print&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;img src=&#34;http://andrewkersten.bitbucket.org/images/2015325044517.png&#34; alt=&#34;DCPU-16 Sample 1&#34; /&gt;&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;img src=&#34;http://andrewkersten.bitbucket.org/images/2015319035433.png&#34; alt=&#34;DCPU-16 Sample 2&#34; /&gt;&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;img src=&#34;http://andrewkersten.bitbucket.org/images/2015319035455.png&#34; alt=&#34;DCPU-16 Sample 3&#34; /&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;a href=&#34;#&#34;&gt;source&lt;/a&gt;&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;a href=&#34;#&#34;&gt;source&lt;/a&gt;&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;a href=&#34;#&#34;&gt;source&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&#34;center&#34;&gt;Checkered&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;Vertical&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;Hex Print&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;img src=&#34;http://andrewkersten.bitbucket.org/images/2015319035314.png&#34; alt=&#34;DCPU-16 Sample 1&#34; /&gt;&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;img src=&#34;http://andrewkersten.bitbucket.org/images/2015319035354.png&#34; alt=&#34;DCPU-16 Sample 2&#34; /&gt;&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;img src=&#34;http://andrewkersten.bitbucket.org/images/2015319035455.png&#34; alt=&#34;DCPU-16 Sample 3&#34; /&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;a href=&#34;#&#34;&gt;source&lt;/a&gt;&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;a href=&#34;#&#34;&gt;source&lt;/a&gt;&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;a href=&#34;#&#34;&gt;source&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;/div&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
