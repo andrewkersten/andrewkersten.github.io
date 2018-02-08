@@ -107,6 +107,7 @@ var wasm = (function() {
 						imports.env._memset = wasmModule.libc.string.memset;
 
 						WebAssembly.instantiate(module, imports).then(function(instance) {
+							instance.exports.__post_instantiate();
 							wasmModule.instance = instance;
 							resolve(wasmModule.instance);
 						}); // instantiate
@@ -390,7 +391,7 @@ var emulator = (function() {
 	emulatorModule.handleStep = function() {
 		stopRunning();
 
-		wasm.instance.exports["_dcpu_cycle"](handle);
+		wasm.instance.exports["_dcpu_process"](handle, 1);
 
 		renderer.updateTexture();
 		renderer.render();

@@ -108,70 +108,6 @@ static const size_t special_opcode_cost[] = {
 	0, // 0x1F - UNUSED
 };
 
-/** The default LEM1802 palette */
-static uint16_t lem1802_palette_default[16] = {
-	0x0000,
-	0x000a,
-	0x00a0,
-	0x00aa,
-	0x0a00,
-	0x0a0a,
-	0x0a50,
-	0x0aaa,
-	0x0555,
-	0x055f,
-	0x05f5,
-	0x05ff,
-	0x0f55,
-	0x0f5f,
-	0x0ff5,
-	0x0fff
-};
-
-/** The default LEM1802 font */
-static uint16_t lem1802_font_default[256] = {
-	0x000f, 0x0808, 0x080f, 0x0808, 0x08f8, 0x0808, 0x00ff, 0x0808,
-	0x0808, 0x0808, 0x08ff, 0x0808, 0x00ff, 0x1414, 0xff00, 0xff08,
-	0x1f10, 0x1714, 0xfc04, 0xf414, 0x1710, 0x1714, 0xf404, 0xf414,
-	0xff00, 0xf714, 0x1414, 0x1414, 0xf700, 0xf714, 0x1417, 0x1414,
-	0x0f08, 0x0f08, 0x14f4, 0x1414, 0xf808, 0xf808, 0x0f08, 0x0f08,
-	0x001f, 0x1414, 0x00fc, 0x1414, 0xf808, 0xf808, 0xff08, 0xff08,
-	0x14ff, 0x1414, 0x080f, 0x0000, 0x00f8, 0x0808, 0xffff, 0xffff,
-	0xf0f0, 0xf0f0, 0xffff, 0x0000, 0x0000, 0xffff, 0x0f0f, 0x0f0f,
-	0x0000, 0x0000, 0x005f, 0x0000, 0x0300, 0x0300, 0x3e14, 0x3e00,
-	0x266b, 0x3200, 0x611c, 0x4300, 0x3629, 0x7650, 0x0002, 0x0100,
-	0x1c22, 0x4100, 0x4122, 0x1c00, 0x2a1c, 0x2a00, 0x083e, 0x0800,
-	0x4020, 0x0000, 0x0808, 0x0800, 0x0040, 0x0000, 0x601c, 0x0300,
-	0x3e41, 0x3e00, 0x427f, 0x4000, 0x6259, 0x4600, 0x2249, 0x3600,
-	0x0f08, 0x7f00, 0x2745, 0x3900, 0x3e49, 0x3200, 0x6119, 0x0700,
-	0x3649, 0x3600, 0x2649, 0x3e00, 0x0024, 0x0000, 0x4024, 0x0000,
-	0x0814, 0x2241, 0x1414, 0x1400, 0x4122, 0x1408, 0x0259, 0x0600,
-	0x3e59, 0x5e00, 0x7e09, 0x7e00, 0x7f49, 0x3600, 0x3e41, 0x2200,
-	0x7f41, 0x3e00, 0x7f49, 0x4100, 0x7f09, 0x0100, 0x3e49, 0x3a00,
-	0x7f08, 0x7f00, 0x417f, 0x4100, 0x2040, 0x3f00, 0x7f0c, 0x7300,
-	0x7f40, 0x4000, 0x7f06, 0x7f00, 0x7f01, 0x7e00, 0x3e41, 0x3e00,
-	0x7f09, 0x0600, 0x3e41, 0xbe00, 0x7f09, 0x7600, 0x2649, 0x3200,
-	0x017f, 0x0100, 0x7f40, 0x7f00, 0x1f60, 0x1f00, 0x7f30, 0x7f00,
-	0x7708, 0x7700, 0x0778, 0x0700, 0x7149, 0x4700, 0x007f, 0x4100,
-	0x031c, 0x6000, 0x0041, 0x7f00, 0x0201, 0x0200, 0x8080, 0x8000,
-	0x0001, 0x0200, 0x2454, 0x7800, 0x7f44, 0x3800, 0x3844, 0x2800,
-	0x3844, 0x7f00, 0x3854, 0x5800, 0x087e, 0x0900, 0x4854, 0x3c00,
-	0x7f04, 0x7800, 0x447d, 0x4000, 0x2040, 0x3d00, 0x7f10, 0x6c00,
-	0x417f, 0x4000, 0x7c18, 0x7c00, 0x7c04, 0x7800, 0x3844, 0x3800,
-	0x7c14, 0x0800, 0x0814, 0x7c00, 0x7c04, 0x0800, 0x4854, 0x2400,
-	0x043e, 0x4400, 0x3c40, 0x7c00, 0x1c60, 0x1c00, 0x7c30, 0x7c00,
-	0x6c10, 0x6c00, 0x4c50, 0x3c00, 0x6454, 0x4c00, 0x0836, 0x4100,
-	0x0077, 0x0000, 0x4136, 0x0800, 0x0201, 0x0201, 0x704c, 0x7000
-};
-
-enum dcpu_fsm_state
-{
-	DCPU_FSM_DECODE_INSTRUCTION,
-	DCPU_FSM_DECODE_OPERAND_B,
-	DCPU_FSM_PERFORM_OPERATION,
-	DCPU_FSM_SKIP_OPERATION,
-};
-
 struct dcpu
 {
 	BOOLINT running;
@@ -181,10 +117,10 @@ struct dcpu
 
 	enum
 	{
-		DCPU_DECODE_INSTRUCTION,
-		DCPU_LOOK_UP_OPERAND_B,
-		DCPU_PERFORM_OPERATION,
-		DCPU_INSTRUCTION_SKIP,
+		DCPU_STATE_DECODE_INSTRUCTION,
+		DCPU_STATE_LOOK_UP_OPERAND_B,
+		DCPU_STATE_PERFORM_OPERATION,
+		DCPU_STATE_INSTRUCTION_SKIP,
 	} state;
 
 	uint16_t opcode;
@@ -248,7 +184,7 @@ void dcpu_reset(DCPU dcpu)
 
 	interrupt_queue_reset(dcpu->interrupt_queue);
 
-	dcpu->state = DCPU_DECODE_INSTRUCTION;
+	dcpu->state = DCPU_STATE_DECODE_INSTRUCTION;
 
 	dcpu->registers[REGISTER_A] = 0x0000;
 	dcpu->registers[REGISTER_B] = 0x0000;
@@ -308,6 +244,7 @@ void dcpu_flash(DCPU dcpu, char* bytes, size_t length)
 
 HARDWARE dcpu_attach(DCPU dcpu)
 {
+	// Can't use VERIFY_HANDLE() macro, need to return NULL.
 	if (dcpu == NULL)
 	{
 		if (DCPU_ERROR_HANDLER)
@@ -442,10 +379,8 @@ static void decode_instruction(DCPU dcpu)
 	dcpu->operand_code_b = (instruction >> 5) & 0x1F;
 }
 
-void dcpu_cycle(DCPU dcpu)
+static void dcpu_cycle(DCPU dcpu)
 {
-	VERIFY_HANDLE(dcpu);
-
 	if (dcpu->running == FALSE || dcpu->fire == TRUE)
 	{
 		return;
@@ -457,7 +392,7 @@ void dcpu_cycle(DCPU dcpu)
 	{
 		switch (dcpu->state)
 		{
-			case DCPU_DECODE_INSTRUCTION:
+			case DCPU_STATE_DECODE_INSTRUCTION:
 			{
 				// Should we process an interrupt?
 				if (dcpu->queue_interrupts == FALSE)
@@ -492,16 +427,16 @@ void dcpu_cycle(DCPU dcpu)
 				// up operand B.
 				if (dcpu->opcode == 0)
 				{
-					dcpu->state = DCPU_PERFORM_OPERATION;
+					dcpu->state = DCPU_STATE_PERFORM_OPERATION;
 				}
 				else
 				{
-					dcpu->state = DCPU_LOOK_UP_OPERAND_B;
+					dcpu->state = DCPU_STATE_LOOK_UP_OPERAND_B;
 				}
 
 				break;
 			}
-			case DCPU_LOOK_UP_OPERAND_B:
+			case DCPU_STATE_LOOK_UP_OPERAND_B:
 			{
 				// Look up operand B.
 				dcpu->operand_b = operand_address(dcpu, dcpu->operand_code_b, FALSE);
@@ -512,10 +447,10 @@ void dcpu_cycle(DCPU dcpu)
 					exit = TRUE;
 				}
 
-				dcpu->state = DCPU_PERFORM_OPERATION;
+				dcpu->state = DCPU_STATE_PERFORM_OPERATION;
 				break;
 			}
-			case DCPU_PERFORM_OPERATION:
+			case DCPU_STATE_PERFORM_OPERATION:
 			{
 				if (dcpu->operation_cost > 1)
 				{
@@ -523,7 +458,7 @@ void dcpu_cycle(DCPU dcpu)
 				}
 				else
 				{
-					dcpu->state = DCPU_DECODE_INSTRUCTION;
+					dcpu->state = DCPU_STATE_DECODE_INSTRUCTION;
 
 					switch (dcpu->opcode)
 					{
@@ -761,7 +696,7 @@ void dcpu_cycle(DCPU dcpu)
 						{
 							if (((*dcpu->operand_b) & (*dcpu->operand_a)) == 0)
 							{
-								dcpu->state = DCPU_INSTRUCTION_SKIP;
+								dcpu->state = DCPU_STATE_INSTRUCTION_SKIP;
 							}
 
 							break;
@@ -770,7 +705,7 @@ void dcpu_cycle(DCPU dcpu)
 						{
 							if (((*dcpu->operand_b) & (*dcpu->operand_a)) != 0)
 							{
-								dcpu->state = DCPU_INSTRUCTION_SKIP;
+								dcpu->state = DCPU_STATE_INSTRUCTION_SKIP;
 							}
 
 							break;
@@ -779,7 +714,7 @@ void dcpu_cycle(DCPU dcpu)
 						{
 							if ((*dcpu->operand_a) != (*dcpu->operand_b))
 							{
-								dcpu->state = DCPU_INSTRUCTION_SKIP;
+								dcpu->state = DCPU_STATE_INSTRUCTION_SKIP;
 							}
 
 							break;
@@ -788,7 +723,7 @@ void dcpu_cycle(DCPU dcpu)
 						{
 							if ((*dcpu->operand_a) == (*dcpu->operand_b))
 							{
-								dcpu->state = DCPU_INSTRUCTION_SKIP;
+								dcpu->state = DCPU_STATE_INSTRUCTION_SKIP;
 							}
 
 							break;
@@ -797,7 +732,7 @@ void dcpu_cycle(DCPU dcpu)
 						{
 							if ((*dcpu->operand_a) >= (*dcpu->operand_b))
 							{
-								dcpu->state = DCPU_INSTRUCTION_SKIP;
+								dcpu->state = DCPU_STATE_INSTRUCTION_SKIP;
 							}
 
 							break;
@@ -812,7 +747,7 @@ void dcpu_cycle(DCPU dcpu)
 						{
 							if ((*dcpu->operand_a) <= (*dcpu->operand_b))
 							{
-								dcpu->state = DCPU_INSTRUCTION_SKIP;
+								dcpu->state = DCPU_STATE_INSTRUCTION_SKIP;
 							}
 
 							break;
@@ -882,7 +817,7 @@ void dcpu_cycle(DCPU dcpu)
 				exit = TRUE;
 				break;
 			}
-			case DCPU_INSTRUCTION_SKIP:
+			case DCPU_STATE_INSTRUCTION_SKIP:
 			{
 				decode_instruction(dcpu);
 
@@ -917,7 +852,7 @@ void dcpu_cycle(DCPU dcpu)
 					case 0x17: // IFU
 						break;
 					default:
-						dcpu->state = DCPU_DECODE_INSTRUCTION;
+						dcpu->state = DCPU_STATE_DECODE_INSTRUCTION;
 						break;
 				}
 
@@ -957,6 +892,7 @@ void dcpu_set_register(DCPU dcpu, enum Register r, uint16_t value)
 
 uint16_t dcpu_get_register(DCPU dcpu, enum Register r)
 {
+	// Can't use VERIFY_HANDLE() macro, return value required
 	if (dcpu == NULL)
 	{
 		if (DCPU_ERROR_HANDLER)
@@ -972,6 +908,7 @@ uint16_t dcpu_get_register(DCPU dcpu, enum Register r)
 
 uint16_t* dcpu_memory(DCPU dcpu)
 {
+	// Can't use VERIFY_HANDLE() macro, return value required
 	if (dcpu == NULL)
 	{
 		if (DCPU_ERROR_HANDLER)
@@ -1002,6 +939,7 @@ void dcpu_on_error(dcpu_error_handler error_handler)
 
 size_t dcpu_queue_size(DCPU dcpu)
 {
+	// Can't use VERIFY_HANDLE() macro, return value required
 	if (dcpu == NULL)
 	{
 		if (DCPU_ERROR_HANDLER)

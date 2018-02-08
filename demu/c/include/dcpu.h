@@ -88,13 +88,6 @@ DLLEXPORT void dcpu_flash(DCPU dcpu, char* bytes, size_t length);
 DLLEXPORT HARDWARE dcpu_attach(DCPU dcpu);
 
 /**
- * Simulate one clock cycle.
- * The DCPU must be powered on and not on fire for this to have an effect.
- * @param dcpu The DCPU instance.
- */
-DLLEXPORT void dcpu_cycle(DCPU dcpu);
-
-/**
  * Simulate the passed in number of clock cycles.
  * The DCPU must be powered on and not on fire for this to have an effect.
  * @param dcpu The DCPU instance.
