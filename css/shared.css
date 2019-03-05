@@ -1,504 +1,136 @@
 :root {
-    --color-primary: #4caf50;
-    --color-light: #66bb6a;
-    --color-lightest: #e8f5e9;
-    --color-text: #212121;
-    --color-text-light: #757575;
-    --color-container-background: #f5f5f5;
-    --color-container-border: #d0d0d0;
-    --color-container-shadow: #757575;
-    --page-border: 0.5em solid var(--color-primary);
-    --max-width: 1024px;
-}
+	--color-primary: #4caf50;
+	--color-light: #66bb6a;
+	--color-lightest: #e8f5e9;
+	--color-text: #212121;
+	--color-text-light: #757575;
 
-body {
-    display: grid;
-    font-family: 'Raleway', sans-serif;
-    grid-template-rows: auto 1fr auto;
-    margin: 0;
-    min-height: 100vh;
-    color: var(--color-text);
-}
+	--max-width: 1024px;
 
-nav {
-    background-color: var(--color-container-background);
-    border-bottom: 1px solid var(--color-container-border);
-    box-shadow: 0px 1px 3px var(--color-container-shadow);
-    border-top: var(--page-border);
-}
+	--container-background-color: #f5f5f5;
+	--container-border: 1px solid #d0d0d0;
+	--shadowed: 0px 1px 3px #757575;
 
-#nav-container {
-    width: 100%;
-    max-width: var(--max-width);
-    margin-left: auto;
-    margin-right: auto;
-    overflow: hidden;
-    /*display: flex;
-    justify-content: space-between;*/
-}
-
-#nav-pages {
-    float: left;
-}
-
-#nav-social {
-    float: right;
-}
-
-nav ul {
-    list-style: none;
-    margin: 1em;
-    padding: 0;
-}
-
-@media only screen and (max-width: 37.5em) {
-    #nav-pages:before {
-        color: var(--color-text);
-        font-family: "Font Awesome 5 Free";
-        font-weight: 900;
-        width: 1em;
-        height: 1em;
-        content: "\f0c9";
-    }
-
-    #nav-pages > li {
-        display: none;
-    }
-
-    #nav-pages {
-        position: relative;
-    }
-
-    #nav-pages:hover {
-        position: absolute;
-        background-color: var(--color-container-background);
-        border: 1px solid var(--color-container-border);
-        padding: 1em;
-    }
-
-    #nav-pages:hover li {
-        display: block;
-        margin-bottom: 0.5em;
-    }
-
-    #nav-pages:hover:before {
-        display: none;
-    }
-}
-
-nav li {
-    display: inline-block;
-    font-size: 1.1em;
-}
-
-#nav-pages > li {
-    margin-right: 1em;
-}
-
-#nav-social > li {
-    margin-left: 1em;
-}
-
-nav a {
-    color: var(--color-text);
-}
-
-nav a:hover {
-    color: var(--color-primary);
-}
-
-footer {
-    border-bottom: var(--page-border);
-    margin-top: 4em;
+	font-family: 'Raleway', sans-serif;
+	color: var(--color-text);
 }
 
 a {
-    color: var(--color-primary);
-    text-decoration: none;
+	color: var(--color-primary);
+	text-decoration: none;
 }
 
 a:hover {
-    text-decoration: underline;
+	color: var(--color-text);
+	text-decoration: underline;
+}
+
+.container {
+	background-color: var(--container-background-color);
+	border: var(--container-border);
+}
+
+.shadowed {
+	box-shadow: var(--shadowed);
+}
+
+body {
+	display: grid;
+	grid-template-rows: auto 1fr auto;
+	margin: 0;
+	min-height: 100vh;
+	box-sizing: border-box;
+	border-top: 0.5em solid var(--color-primary);
+	border-bottom: 0.5em solid var(--color-primary);
 }
 
 main {
-    width: 100%;
-    max-width: 1024px;
-    margin-left: auto;
-    margin-right: auto;
+	width: 100%;
+	max-width: var(--max-width);
+	margin: 1em auto;
+	padding: 0 1em;
+	box-sizing: border-box;
 }
 
-main h1 {
-    font-size: 5em;
-    font-weight: normal;
-    text-align: center;
+#nav-wrapper {
+	width: 100%;
+	max-width: var(--max-width);
+	margin: 0 auto;
+	padding: 0 1em;
+	box-sizing: border-box;
 }
 
-/* 
-----------------------------------------------------------------
-    Landing Specific Styles
-----------------------------------------------------------------
-*/
-
-main#landing {
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    text-align: center;
+nav ul {
+	list-style: none;
+	margin: 1em 0;
+	padding: 0;
 }
 
-main#landing > img {
-    width: 12rem;
-    height: 12rem;
+nav li {
+	display: inline-block;
+	font-size: 1.1em;
 }
 
-main#landing > h1 {
-    font-weight: normal;
-    font-size: 5rem;
-    margin: 1rem;
+nav a {
+	color: var(--color-text);
 }
 
-main#landing > p {
-    margin: 0;
-    margin-bottom: 1vh;
-    font-size: 1.5em;
+nav a:hover {
+	color: var(--color-primary);
 }
 
-main#landing a {
-    color: var(--color-primary);
+#nav-pages {
+	float: left;
 }
 
-
-/* 
-----------------------------------------------------------------
-    Portfolio Specific Styles
-----------------------------------------------------------------
-*/
-
-main#portfolio .container {
-    background-color: var(--color-container-background);
-    border: 1px solid var(--color-container-border);
-    box-shadow: 0px 1px 3px var(--color-container-shadow);
-    padding: 1em;
-    overflow: hidden;
-    margin-bottom: 3em;
-    margin-left: 1em;
-    margin-right: 1em;
+#nav-social {
+	float: right;
 }
 
-main#portfolio h2 {
-    font-size: 2em;
-    font-weight: bold;
-    margin: 0;
-    margin-bottom: 1rem;
+#nav-social > li {
+	margin-left: 1em;
 }
 
-main#portfolio img.left {
-    float: left;
-    margin-right: 2em;
-    margin-bottom: 0.5em;
-    margin-top: 0.5em;
+@media only screen and (min-width: 37.5em) {
+
+	#nav-pages > li {
+		margin-right: 1em;
+	}
+
 }
 
-main#portfolio img.right {
-    float: right;
-    margin-left: 2em;
-    margin-bottom: 0.5em;
-    margin-top: 0.5em;
-}
+@media only screen and (max-width: 37.5em) {
 
-main#portfolio div.center {
-    text-align: center;
-}
+	#nav-pages::before {
+		font-family: "Font Awesome 5 Free";
+		font-weight: 900;
+		width: 1em;
+		height: 1em;
+		content: "\f0c9";
+	}
 
-main#portfolio div.center > img {
-    margin-left: 0.5em;
-    margin-right: 0.5em;
-}
+	#nav-pages > li {
+		display: none;
+	}
 
-main#portfolio p {
-    font-size: 1.25em;
-    line-height: 1.5em;
-}
+	#nav-pages {
+		position: relative;
+	}
 
-main#portfolio #btn-demo {
-    padding: 0.5em;
-    background-color: var(--color-primary);
-    border: 1px solid var(--color-text);
-    color: var(--color-text);
-    cursor: pointer;
-}
+	#nav-pages:hover::before {
+		display: none;
+	}
 
-main#portfolio #btn-demo:hover {
-    background-color: var(--color-light);
-    text-decoration: none;
-}
+	#nav-pages:hover {
+		position: absolute;
+		background-color: var(--container-background-color);
+		border: var(--container-border);
+		padding: 1em;
+	}
 
-main#portfolio li {
-    font-size: 1.25em;
-    line-height: 1.5em;
-}
+	#nav-pages:hover li {
+		display: block;
+		margin-bottom: 0.5em;
+	}
 
-/* 
-----------------------------------------------------------------
-    Emulator Specific Styles
-----------------------------------------------------------------
-*/
-
-main#emulator p {
-    font-size: 1.25em;
-    line-height: 1.5em;
-}
-
-main#emulator div.wrapper {
-    text-align: center;
-}
-
-main#emulator canvas {
-    margin-top: 2em;
-    background-color: #000000;
-}
-
-main#emulator #emulator-controls {
-    margin-top: 1em;
-    margin-bottom: 2em;
-}
-
-main#emulator ul {
-    list-style: none;
-    padding: 0;
-}
-
-main#emulator li {
-    display: inline-block;
-    background-color: var(--color-primary);
-    cursor: pointer;
-    font-size: 1.25em;
-    width: 5em;
-    padding: 0.25em;
-    text-align: center;
-    border: 1px solid var(--color-text);
-}
-
-main#emulator li:hover {
-    background-color: var(--color-light);
-}
-
-main#emulator label {
-    display: block;
-    font-weight: bold;
-    margin-top: 3em;
-    margin-bottom: 1em;
-}
-
-main#emulator p > code {
-    margin: 0.5em;
-    padding: 0.25em;
-    background-color: var(--color-container-background);
-    border: 1px solid var(--color-container-border);
-}
-
-main#emulator pre {
-    text-align: left;
-    width: 100%;
-    background-color: var(--color-container-background);
-    border: 1px solid var(--color-container-border);
-    margin-left: auto;
-    margin-right: auto;
-    overflow-x: scroll;
-    padding: 1em;
-}
-
-/* 
-----------------------------------------------------------------
-    Blog Specific Styles
-----------------------------------------------------------------
-*/
-
-main#blog article {
-    padding: 1em;
-    text-align: left;
-    margin-top: 4em;
-}
-
-main#blog article > h2 {
-    font-size: 2em;
-    margin: 0;
-    margin-bottom: 0.2em;
-}
-
-main#blog .date {
-    color: var(--color-text-light);
-}
-
-main#blog article > p {
-    font-size: 1.25em;
-    line-height: 1.5em;
-}
-
-main#blog .more {
-    font-size: 1.25em;
-    text-decoration: underline;
-    color: var(--color-primary);
-}
-
-main#blog .tags {
-    list-style: none;
-    padding-left: 0;
-}
-
-main#blog .tags:before {
-    color: var(--color-text);
-    font-family: "Font Awesome 5 Free";
-    font-weight: 900;
-    width: 1em;
-    height: 1em;
-    content: "\f02c";
-    display: inline-block;
-    margin-right: 0.5em;
-}
-
-main#blog .tag {
-    display: inline-block;
-    margin-right: 0.5em;
-}
-
-/* 
-----------------------------------------------------------------
-    Contact Specific Styles
-----------------------------------------------------------------
-*/
-
-#contact h1 {
-    font-size: 3em;
-    border-bottom: 1px solid var(--color-text);
-    width: 100%;
-    text-align: center;
-    margin-bottom: 3rem;
-    font-weight: normal;
-}
-
-#contact {
-    text-align: left;
-    max-width: 28em;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-
-#contact > .wrapper {
-    background-color: var(--color-container-background);
-    border: 1px solid var(--color-container-border);
-    box-shadow: 0px 1px 3px var(--color-container-shadow);
-    margin-left: 0.5em;
-    margin-right: 0.5em;
-    padding-left: 2em;
-    padding-right: 2em;
-    margin-top: 4rem;
-}
-
-#contact label {
-    font-weight: bold;
-}
-
-#contact input, #contact textarea {
-    box-sizing: border-box;
-    width: 100%;
-    font-size: 1.1em;
-    line-height: 1.5em;
-    margin-bottom: 1.5em;
-    margin-top: 0.25em;
-    padding: 0.2em;
-    padding-left: 0.75em;
-    border: 1px solid var(--color-text);
-}
-
-#contact textarea {
-    resize: vertical;
-    height: 10em;
-}
-
-#contact input:valid {
-    background-color: var(--color-lightest);
-}
-
-#contact input[type="submit"] {
-    box-sizing: border-box;
-    background-color: var(--color-primary);
-    border: 1px solid var(--color-text);
-    line-height: 2em;
-    width: 100%;
-    cursor: pointer;
-}
-
-#contact input[type="submit"]:hover {
-    background-color: var(--color-light);
-}
-
-/* 
-----------------------------------------------------------------
-    Calendar Specific Styles
-----------------------------------------------------------------
-*/
-
-main#calendar table {
-    width: 100%;
-    table-layout: fixed;
-    margin-top: 4em;
-    min-width: 1024px;
-    margin-left: 1em;
-    margin-right: 1em;
-}
-
-main#calendar table, main#calendar th {
-    border-collapse: collapse;
-    border: 3px solid var(--color-text);
-}
-
-main#calendar tr:first-child > th {
-    font-size: 3em;
-    padding: 1rem;
-    position: relative;
-}
-
-main#calendar tr:last-child > th {
-    padding: 0.75em;
-}
-
-main#calendar td {
-    border-collapse: collapse;
-    border: 1px solid var(--color-text);
-    padding: 1em;
-    height: 4em;
-    vertical-align: top;
-    text-align: right;
-}
-
-main#calendar td.inactive {
-    background-color: var(--color-container-border);
-}
-
-main#calendar #btnPrev, main#calendar #btnNext {
-    position: absolute;
-    padding: 0.2em;
-    font-size: 1.5rem;
-    border: 1px solid var(--color-text);
-    border-radius: 5px;
-    background-color: var(--color-primary);
-    cursor: pointer;
-}
-
-main#calendar #btnPrev:hover, main#calendar #btnNext:hover {
-    background-color: var(--color-light);
-}
-
-main#calendar #btnPrev {
-    left: 0;
-    margin-left: 1rem;
-}
-
-main#calendar #btnNext {
-    right: 0;
-    margin-right: 1rem;
 }

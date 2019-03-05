@@ -1,32 +1,69 @@
 <!DOCTYPE html>
 <html lang="en-US">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Andrew Kersten</title>
-  <link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet"> 
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
-  <link rel="stylesheet" type="text/css" href="/css/shared.css">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Andrew Kersten</title>
+	<link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet"> 
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
+	<link rel="stylesheet" type="text/css" href="/css/shared.css">
+	<style>
+		main {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			text-align: center;
+		}
+
+		main > img {
+			width: 12rem;
+			height: 12rem;
+		}
+
+		main > h1 {
+			font-weight: normal;
+			font-size: 5rem;
+			margin: 1rem;
+		}
+
+		main > p {
+			margin: 0;
+			font-size: 1.5rem;
+		}
+
+		@media only screen and (max-width: 37.5em) {
+
+			main > img {
+				width: 8rem;
+				height: 8rem;
+			}
+
+			main > h1 {
+				font-size: 3.5rem;
+			}
+
+		}
+	</style>
 </head>
 <body>
-  <nav>
-    <div id="nav-container">
-      <ul id="nav-pages">
-        <li><a href="/">Home</a></li>
-        <li><a href="#">Resume</a></li>
-        <li><a href="#">Portfolio</a></li>
-      </ul>
-      <ul id="nav-social">
-          <li><a href="mailto:andrew.w.kersten@gmail.com"><i class="far fa-envelope"></i></a></li>
-          <li><a href="https://github.com/andrewkersten"><i class="fab fa-github"></i></a></li>
-      </ul>
-    </div>
-  </nav>
-  <main id="landing">
-    <img src="img/portrait_placeholder.png" alt="portrait">
-    <h1>Andrew Kersten</h1>
-    <p>Check out my <a href="#">Resume</a> and <a href="#">Portfolio</a>.</p>
-  </main>
-  <footer></footer>
+	<nav class="container shadowed">
+		<div id="nav-wrapper">
+			<ul id="nav-pages">
+				<li><a href="/">Home</a></li>
+				<li><a href="#">Resume</a></li>
+				<li><a href="#">Portfolio</a></li>
+			</ul>
+			<ul id="nav-social">
+				<li><a href="mailto:andrew.w.kersten@gmail.com"><i class="far fa-envelope"></i></a></li>
+				<li><a href="https://github.com/andrewkersten"><i class="fab fa-github"></i></a></li>
+			</ul>
+		</div>
+	</nav>
+	<main>
+		<img src="img/portrait_placeholder.png" alt="portrait">
+		<h1>Andrew Kersten</h1>
+		<p>Check out my <a href="#">Resume</a> and <a href="#">Portfolio</a>.</p>
+	</main>
 </body>
 </html>
